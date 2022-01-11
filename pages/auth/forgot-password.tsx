@@ -1,10 +1,10 @@
 import { NextPage } from "next";
 import React, { FormEvent } from "react";
+import { useForm } from "react-hook-form";
 import Loading from "../../features/client/core/components/Loading";
 import MainLayout from "../../features/client/core/components/MainLayout";
 import Popup from "../../features/client/core/components/Popup";
 import useApi from "../../features/client/core/hooks/use_api";
-import useForm from "../../features/client/core/hooks/use_form";
 import { handleClientValidationError } from "../../features/client/core/utils/client_errors";
 import { forgetPasswordClient } from "../../features/client/user/client";
 import { AuthForm } from "../../features/client/user/components/AuthForm";
@@ -16,20 +16,14 @@ import {
 const ForgetPasswordPage: NextPage = () => {
   const forgetPasswordMutation = useApi<typeof forgetPasswordClient>();
 
-  const { formValues, handleChange } = useForm<ForgetPasswordParams>({
-    email: "",
-  });
-
-  const handleOnSubmit = async (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-
+  const handleOnSubmit = async (data: any) => {
     try {
-      const formData = forgetPasswordValidate(formValues);
-      const data = await forgetPasswordMutation.request(
+      const formData = forgetPasswordValidate(data);
+      const resData = await forgetPasswordMutation.request(
         forgetPasswordClient(formData)
       );
 
-      if (!data) return;
+      if (!resData) return;
     } catch (error) {
       console.log(handleClientValidationError(error));
     }
@@ -39,7 +33,6 @@ const ForgetPasswordPage: NextPage = () => {
     <MainLayout className='flex justify-center align-center'>
       <Loading className='h-full' isLoading={forgetPasswordMutation.loading} />
       <AuthForm
-        handleChange={handleChange}
         submitText='redefinir password'
         type='forgot-password'
         onSubmit={handleOnSubmit}

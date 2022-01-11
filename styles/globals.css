@@ -6,11 +6,19 @@
 @tailwind utilities;
 
 @layer base {
+  * {
+    @apply text-[1.6rem];
+  }
+
   html,
   body {
-    @apply flex flex-col h-screen w-full bg-brand-gray text-brand-gray-3;
+    @apply flex flex-col h-full w-full bg-brand-dark text-white;
     font-size: 62.5%;
     font-family: "Comfortaa", cursive;
+  }
+
+  #__next {
+    @apply h-full w-full;
   }
 }
 

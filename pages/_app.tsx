@@ -3,6 +3,7 @@ import Script from "next/script";
 import React, { useEffect } from "react";
 import Header from "../features/client/core/components/Header";
 import Popup from "../features/client/core/components/Popup";
+import SideNav from "../features/client/core/components/SideNav";
 import useApi from "../features/client/core/hooks/use_api";
 import { useAuthStore } from "../features/client/core/stores/authStore";
 import { useErrorStore } from "../features/client/core/stores/errorStore";
@@ -30,15 +31,15 @@ function MyApp({ Component, pageProps }: AppProps) {
   }, [test]);
 
   return (
-    <>
-      <Header />
+    <div className='flex h-full'>
+      <SideNav />
       <Component {...pageProps} />
       <Popup isOpen={isOpen} texts={errors} onClose={() => setIsOpen(false)} />
       <Script
         src='https://accounts.google.com/gsi/client'
         strategy='beforeInteractive'
       />
-    </>
+    </div>
   );
 }
 

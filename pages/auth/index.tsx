@@ -1,12 +1,12 @@
 import { NextPage } from "next";
 import { useRouter } from "next/router";
-import React, { FormEvent, useEffect } from "react";
+import React from "react";
+import { SubmitHandler } from "react-hook-form";
 import Loading from "../../features/client/core/components/Loading";
 import MainLayout from "../../features/client/core/components/MainLayout";
-import Popup from "../../features/client/core/components/Popup";
 import useApi from "../../features/client/core/hooks/use_api";
-import useForm from "../../features/client/core/hooks/use_form";
 import { useAuthStore } from "../../features/client/core/stores/authStore";
+import { useErrorStore } from "../../features/client/core/stores/errorStore";
 import { handleClientValidationError } from "../../features/client/core/utils/client_errors";
 import {
   loginClient,
@@ -28,32 +28,21 @@ const LoginPage: NextPage = () => {
 
   const { setToken, setUser } = useAuthStore();
 
-  const [showPopup, setShowPopup] = React.useState(false);
+  const { setErrors, setIsOpen } = useErrorStore();
 
-  const { formValues, handleChange } = useForm<LoginValidationParams>({
-    email: "",
-    password: "",
-  });
-
-  useEffect(() => {
-    if (loginMutation.error || loginWithGoogleMutation.error) {
-      setShowPopup(true);
-    }
-  }, [loginMutation.error, loginWithGoogleMutation.error]);
-
-  const handleOnSubmit = async (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-
+  const handleOnSubmit: SubmitHandler<LoginValidationParams> = async (data) => {
     try {
-      const formData = loginValidation(formValues);
-      const data = await loginMutation.request(loginClient(formData));
+      const formData = loginValidation(data);
+      const resData = await loginMutation.request(loginClient(formData));
 
-      if (!data) return;
-      setUser(data.user);
-      setToken(data.token);
+      if (!resData) return;
+
+      setUser(resData.user);
+      setToken(resData.token);
       replace("/");
     } catch (error) {
-      console.log(handleClientValidationError(error));
+      setErrors(handleClientValidationError(error));
+      setIsOpen(true);
     }
   };
 
@@ -71,31 +60,22 @@ const LoginPage: NextPage = () => {
       setToken(resData.token);
       replace("/");
     } catch (error) {
-      console.log(handleClientValidationError(error));
+      setErrors(handleClientValidationError(error));
+      setIsOpen(true);
     }
   };
 
   return (
-    <MainLayout className='flex justify-center align-center '>
+    <MainLayout className='flex w-full justify-center align-center '>
       <Loading
         className='h-full'
         isLoading={loginMutation.loading || loginWithGoogleMutation.loading}
       />
       <AuthForm
-        handleChange={handleChange}
         submitText='iniciar sessão'
         type='login'
         onSubmit={handleOnSubmit}
         onLoginWithGoogle={handleLoginWithGoogle}
-      />
-
-      <Popup
-        isOpen={showPopup}
-        onClose={() => setShowPopup(false)}
-        texts={[
-          ...(loginMutation.error || []),
-          ...(loginWithGoogleMutation.error || []),
-        ]}
       />
     </MainLayout>
   );

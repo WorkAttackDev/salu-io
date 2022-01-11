@@ -9,12 +9,13 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        "brand-gray-3": "rgba(65, 80, 87, 1)",
-        "brand-gray-2": "rgba(108, 133, 146, 1)",
-        "brand-gray-1": "rgba(152, 170, 179, 1)",
+        "brand-gray-3": "#38323B",
+        "brand-gray-2": "#585F69",
+        "brand-gray-1": "#BDC0C4",
         "brand-gray": "rgba(239, 243, 244, 1)",
         "brand-primary": "hsla(51, 90%, 58%, 1)",
-        "brand-primary-dark": "hsla(51, 90%, 38%, 1)",
+        brand: "#ff811c",
+        "brand-dark": "#1e252b",
       },
       borderRadius: {
         base: "2rem",
@@ -30,5 +31,8 @@ module.exports = {
   variants: {
     extend: {},
   },
-  plugins: [require("@tailwindcss/typography")],
+  plugins: [
+    require("@tailwindcss/typography"),
+    require("@tailwindcss/line-clamp"),
+  ],
 };

@@ -27,12 +27,26 @@ enum TokenType {
   FORGET_TOKEN
 }
 
-enum BroaReactionType {
-  HAHA
-  LOVE
+enum ProjectStatus {
+  TODO
+  IN_PROGRESS
+  DONE
 }
 
 // Models
+
+model Token {
+  id        Int       @id @default(autoincrement())
+  type      TokenType
+  token     String    @unique @default(uuid())
+  owner     User      @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  userId    Int
+  expiresAt DateTime
+  createdAt DateTime  @default(now())
+
+  @@map("tokens")
+}
+
 model User {
   id            Int      @id @default(autoincrement())
   email         String   @unique @db.VarChar(255)
@@ -46,49 +60,44 @@ model User {
   updatedAt     DateTime @updatedAt
   createdAt     DateTime @default(now())
 
-  tokens       Token[]
-  Broa         Broa[]
-  BroaReaction BroaReaction[]
+  tokens  Token[]
+  Project Project[]
   @@map("users")
 }
 
-model BroaReaction {
-  id Int @id @default(autoincrement())
+model Project {
+  id          Int           @id @default(autoincrement())
+  name        String        @db.VarChar(200)
+  description String?       @db.VarChar(1000)
+  status      ProjectStatus @default(TODO)
+  Task        Task[]
 
-  user         User             @relation(fields: [userId], references: [id])
-  userId       Int
-  broa         Broa             @relation(fields: [broaId], references: [id], onUpdate: Cascade, onDelete: Cascade)
-  broaId       Int
-  reactionType BroaReactionType
-  updatedAt    DateTime         @updatedAt
-  createdAt    DateTime         @default(now())
+  ownerId Int
+  owner   User @relation(fields: [ownerId], references: [id])
 
-  @@unique([userId, broaId, reactionType])
-  @@map("broa_reactions")
+  startDate DateTime @db.DateTime
+  endDate   DateTime @db.DateTime
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("projects")
 }
 
-model Broa {
-  id           Int      @id @default(autoincrement())
-  wrongVersion String   @db.VarChar(255)
-  rightVersion String   @db.VarChar(255)
-  author       String   @default("Desconhecido") @db.VarChar(100)
-  user         User?    @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  userId       Int?
-  updatedAt    DateTime @default(now())
-  createdAt    DateTime @default(now())
+model Task {
+  id          Int           @id @default(autoincrement())
+  name        String        @db.VarChar(200)
+  description String?       @db.VarChar(1000)
+  status      ProjectStatus @default(TODO)
 
-  reactions BroaReaction[]
-  @@map("broas")
-}
+  projectId Int
+  project   Project @relation(fields: [projectId], references: [id])
 
-model Token {
-  id        Int       @id @default(autoincrement())
-  type      TokenType
-  token     String    @unique @default(uuid())
-  owner     User      @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  userId    Int
-  expiresAt DateTime
-  createdAt DateTime  @default(now())
+  startDate DateTime @db.DateTime
+  endDate   DateTime @db.DateTime
 
-  @@map("tokens")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("tasks")
 }

@@ -7,7 +7,7 @@ const isProd = process.env.NODE_ENV === "production";
 
 export const AxiosInstance = axios.create({
   baseURL: isProd
-    ? "https://broas.vercel.app/api"
+    ? "https://salu-io.vercel.app/api"
     : "http://localhost:3000/api",
   withCredentials: true,
 });

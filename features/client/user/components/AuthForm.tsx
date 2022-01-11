@@ -1,18 +1,19 @@
 import jwt_decode from "jwt-decode";
 import Link from "next/link";
 import { useEffect } from "react";
-import { LoginWithGoogleValidationParams } from "../../../shared/lib/validation";
+import { SubmitHandler, useForm } from "react-hook-form";
+import {
+  LoginValidationParams,
+  LoginWithGoogleValidationParams,
+} from "../../../shared/lib/validation";
+import { EditProjectValidationParams } from "../../../shared/lib/validation/editProjectValidator";
 import Button from "../../core/components/Button";
 import InputField from "../../core/components/InputField";
-import { links } from "../../core/data/links";
+import { linksObj } from "../../core/data/links";
 import { initializeGoogleLogin } from "../utils";
 
 type Props = {
-  handleChange: (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-    key: any
-  ) => void;
-  onSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
+  onSubmit: SubmitHandler<LoginValidationParams>;
   onLoginWithGoogle?: (data: LoginWithGoogleValidationParams) => void;
   type?: "login" | "signup" | "forgot-password" | "reset-password";
   submitText: string;
@@ -21,10 +22,11 @@ type Props = {
 export const AuthForm = ({
   onSubmit,
   submitText,
-  handleChange,
   onLoginWithGoogle,
   type = "login",
 }: Props) => {
+  const { register, handleSubmit } = useForm<LoginValidationParams>();
+
   useEffect(() => {
     if (type !== "login") return;
 
@@ -38,22 +40,22 @@ export const AuthForm = ({
 
   return (
     <form
-      className='grid shadow-sm gap-16 w-full py-16 rounded-base bg-white max-w-3xl'
-      onSubmit={onSubmit}
+      className='grid shadow-sm gap-16 w-full py-16 rounded-base max-w-3xl'
+      onSubmit={handleSubmit(onSubmit)}
     >
-      <h1 className='text-7xl mx-auto font-medium logo-font'>Broas</h1>
-      <div className='flex w-full h-20 bg-brand-gray text-2xl'>
+      <h1 className='text-7xl mx-auto font-medium'>Salu.io</h1>
+      <div className='flex w-full h-20  text-2xl'>
         {type !== "reset-password" ? (
           <>
-            <Link href={links.login}>
+            <Link href={linksObj.login.url}>
               <a
-                className={`flex justify-center items-center duration-200 w-full border-b-2 hover:text-brand-gray-3 hover:border-brand-gray-3 ${
+                className={`flex justify-center items-center duration-200 w-full border-b-2 hover:text-brand hover:border-brand ${
                   type === "login"
-                    ? "border-brand-gray-3 text-brand-gray-3 cursor-default"
+                    ? "border-brand text-brand cursor-default"
                     : "text-brand-gray-1"
                 }`}
               >
-                iniciar sessão
+                {linksObj.login.label}
               </a>
             </Link>
             <button
@@ -61,29 +63,29 @@ export const AuthForm = ({
               disabled
               className={` w-full border-b-2 ${
                 type === "signup"
-                  ? "border-brand-gray-3 text-brand-gray-3 cursor-default"
-                  : "text-brand-gray-1"
+                  ? "border-brand text-brand cursor-default"
+                  : "text-brand-gray-2 border-brand-gray-2"
               } disabled:cursor-not-allowed`}
             >
-              criar conta
+              {linksObj.signup.label}
             </button>
           </>
         ) : (
           <p
-            className={`flex justify-center items-center w-full border-b-2  text-brand-gray-3`}
+            className={`flex justify-center items-center w-full border-b-2  text-brand`}
           >
-            redefinir password
+            {linksObj.resetPassword.label}
           </p>
         )}
       </div>
       <fieldset className='grid gap-8 px-16'>
         {type !== "reset-password" && (
           <InputField
-            autoComplete='email'
+            autoComplete='on'
             type='email'
             labelText='e-mail'
             maxLength={200}
-            onChange={(e) => handleChange(e, "email")}
+            {...register("email")}
           />
         )}
         {type !== "forgot-password" && (
@@ -91,7 +93,7 @@ export const AuthForm = ({
             type='password'
             labelText='password'
             maxLength={250}
-            onChange={(e) => handleChange(e, "password")}
+            {...register("password")}
           />
         )}
 
@@ -100,7 +102,7 @@ export const AuthForm = ({
             type='password'
             labelText='digite novamente a password'
             maxLength={250}
-            onChange={(e) => handleChange(e, "againPassword")}
+            {...register("password")}
           />
         )}
       </fieldset>
@@ -109,9 +111,9 @@ export const AuthForm = ({
         {type === "login" && <div id='buttonDiv'></div>}
       </section>
       {type === "login" && (
-        <Link href={links.forgotPassword}>
-          <a className='text-brand-gray-1 mx-auto text-lg text-center duration-200 hover:text-brand-gray-3'>
-            esqueceu a password?
+        <Link href={linksObj.forgotPassword.url}>
+          <a className='text-brand-gray-1 mx-auto text-lg text-center duration-200 hover:text-brand'>
+            {linksObj.forgotPassword.label}
           </a>
         </Link>
       )}

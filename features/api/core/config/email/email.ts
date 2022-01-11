@@ -1,5 +1,4 @@
 import nodemailer from "nodemailer";
-import { feedBackEmailTemplate } from "./templates";
 
 // Email generator
 const FROM_EMAIL = '"Noreply WorkAttack" <noreply@workattackangola.com>';
