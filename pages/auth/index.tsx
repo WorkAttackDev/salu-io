@@ -7,7 +7,7 @@ import MainLayout from "../../features/client/core/components/MainLayout";
 import useApi from "../../features/client/core/hooks/use_api";
 import { useAuthStore } from "../../features/client/core/stores/authStore";
 import { useErrorStore } from "../../features/client/core/stores/errorStore";
-import { handleClientValidationError } from "../../features/client/core/utils/client_errors";
+import { handleClientError } from "../../features/client/core/utils/client_errors";
 import {
   loginClient,
   loginWithGoogleClient,
@@ -41,29 +41,29 @@ const LoginPage: NextPage = () => {
       setToken(resData.token);
       replace("/");
     } catch (error) {
-      setErrors(handleClientValidationError(error));
+      setErrors(handleClientError(error));
       setIsOpen(true);
     }
   };
 
-  const handleLoginWithGoogle = async (
-    data: LoginWithGoogleValidationParams
-  ) => {
-    try {
-      const googleData = loginWithGoogleValidation(data);
-      const resData = await loginWithGoogleMutation.request(
-        loginWithGoogleClient(googleData)
-      );
+  // const handleLoginWithGoogle = async (
+  //   data: LoginWithGoogleValidationParams
+  // ) => {
+  //   try {
+  //     const googleData = loginWithGoogleValidation(data);
+  //     const resData = await loginWithGoogleMutation.request(
+  //       loginWithGoogleClient(googleData)
+  //     );
 
-      if (!resData) return;
-      setUser(resData.user);
-      setToken(resData.token);
-      replace("/");
-    } catch (error) {
-      setErrors(handleClientValidationError(error));
-      setIsOpen(true);
-    }
-  };
+  //     if (!resData) return;
+  //     setUser(resData.user);
+  //     setToken(resData.token);
+  //     replace("/");
+  //   } catch (error) {
+  //     setErrors(handleClientError(error));
+  //     setIsOpen(true);
+  //   }
+  // };
 
   return (
     <MainLayout className='flex w-full justify-center align-center '>
@@ -75,7 +75,6 @@ const LoginPage: NextPage = () => {
         submitText='iniciar sessão'
         type='login'
         onSubmit={handleOnSubmit}
-        onLoginWithGoogle={handleLoginWithGoogle}
       />
     </MainLayout>
   );

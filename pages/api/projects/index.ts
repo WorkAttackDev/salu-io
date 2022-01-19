@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import { getProjectsController } from "../../../features/api/project/getProjectsController";
+import { getProjectsController } from "../../../features/api/project/controllers/getProjectsController";
 
 export default async function handler(
   req: NextApiRequest,

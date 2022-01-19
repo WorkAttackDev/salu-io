@@ -1,6 +1,6 @@
 import { BroaSortBy } from "../../../shared/broas.types";
 import Dropdown from "../../core/components/Dropdown";
-import { useBroasStore } from "../stores/useBroasStore";
+import { useProjectStore } from "../../project/stores/useProductsStore";
 
 type Props = {
   className?: string;
@@ -38,7 +38,7 @@ const filters: Filter[] = [
 ];
 
 export const BroasFilter = ({ className = "", onChange }: Props) => {
-  const broaFilter = useBroasStore((s) => s.broaFilter);
+  const broaFilter = useProjectStore((s) => s.broaFilter);
   return (
     <Dropdown
       title={filters[0].title}

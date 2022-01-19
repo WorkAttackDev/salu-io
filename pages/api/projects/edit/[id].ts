@@ -1,6 +1,6 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from "next";
-import { updateBroaController } from "../../../../features/api/broas/controllers/updateBroaController";
+import { updateProjectController } from "../../../../features/api/project/controllers/updateProjectController";
 import { AuthMiddleware } from "../../../../features/api/core/middlewares/auth";
 import { handleServerError } from "../../../../features/shared/lib/server_errors";
 
@@ -18,7 +18,7 @@ export default async function handler(
 
   switch (method) {
     case "POST": {
-      await updateBroaController(req, res);
+      await updateProjectController(req, res);
 
       break;
     }

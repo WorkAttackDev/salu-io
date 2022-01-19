@@ -8,7 +8,7 @@ const MainLayout: React.FC<Props> = ({
   ...props
 }) => {
   return (
-    <main className={`p-8 md:p-16 ${className}`} {...props}>
+    <main className={`p-8 w-full md:p-16 ${className}`} {...props}>
       {children}
     </main>
   );

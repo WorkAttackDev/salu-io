@@ -1,6 +1,10 @@
 export const linksObj = {
   dashboard: { url: "/", label: "Dashboard" },
   projects: { url: "/projects", label: "Projetos" },
+  project: {
+    url: (id: number) => `/projects/${id}`,
+    label: (projName: string) => projName,
+  },
   settings: { url: "/settings", label: "Configurações" },
   editProject: { url: "/edit-project", label: "Editar Projeto" },
   // user

@@ -42,13 +42,15 @@ const editProjectValidator = z.object({
     })
     .optional(),
 
-  endDate: z.string({
-    required_error: validationErrorMessages.required("data de termino"),
-    invalid_type_error: validationErrorMessages.invalidType(
-      "data de termino",
-      "string"
-    ),
-  }),
+  endDate: z
+    .string({
+      required_error: validationErrorMessages.required("data de termino"),
+      invalid_type_error: validationErrorMessages.invalidType(
+        "data de termino",
+        "string"
+      ),
+    })
+    .min(1, validationErrorMessages.min("data de termino", 1)),
 });
 
 export type EditProjectValidationParams = Omit<

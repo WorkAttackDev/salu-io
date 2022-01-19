@@ -4,26 +4,26 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { getBroasByUserIdClient } from "../../features/client/broa/client";
 import ListBroas from "../../features/client/broa/components/ListBroas";
-import { useBroasStore } from "../../features/client/broa/stores/useBroasStore";
+import { useProjectStore } from "../../features/client/project/stores/useProductsStore";
 import Button from "../../features/client/core/components/Button";
 import MainLayout from "../../features/client/core/components/MainLayout";
 import Modal from "../../features/client/core/components/Modal";
-import { links } from "../../features/client/core/data/links";
 import useApi from "../../features/client/core/hooks/use_api";
 import { useAuthStore } from "../../features/client/core/stores/authStore";
 import { useErrorStore } from "../../features/client/core/stores/errorStore";
-import { handleClientValidationError } from "../../features/client/core/utils/client_errors";
+import { handleClientError } from "../../features/client/core/utils/client_errors";
 import {
   editUserClient,
   logoutClient,
 } from "../../features/client/user/client";
 import EditUserForm from "../../features/client/user/components/EditUserForm";
-import { BroaSortBy } from "../../features/shared/broas.types";
 import {
   editUserValidate,
   EditUserValidationParams,
 } from "../../features/shared/lib/validation/edit_user_validator";
 import { MyUser } from "../../features/shared/models/my_user";
+import { linksObj } from "../../features/client/core/data/links";
+import { SortBy } from "../../features/shared/types";
 
 const Avatar = ({ user }: { user: MyUser | null }) => {
   return (
@@ -46,7 +46,7 @@ const Avatar = ({ user }: { user: MyUser | null }) => {
 
 const ProfilePage: NextPage = ({}) => {
   const { user, setUser } = useAuthStore();
-  const { broas, broasPagination, broaFilter, setFilters } = useBroasStore();
+  const { projects: broas, pagination, filter, setFilters } = useProjectStore();
 
   const { replace } = useRouter();
 
@@ -82,7 +82,7 @@ const ProfilePage: NextPage = ({}) => {
     const res = await logoutQuery.request(logoutClient());
 
     if (!res) return;
-    replace(links.login);
+    replace(linksObj.login.url);
   };
 
   const handleSubmit = async (
@@ -97,7 +97,7 @@ const ProfilePage: NextPage = ({}) => {
       setUser(res);
       setShowModal(false);
     } catch (error) {
-      handleClientValidationError(error);
+      handleClientError(error);
     }
   };
 
@@ -105,18 +105,18 @@ const ProfilePage: NextPage = ({}) => {
     if (!user) return;
 
     if (!search) {
-      if (!broaFilter.wrongVersion) return;
+      if (!filter.name) return;
 
-      setFilters({ wrongVersion: undefined });
-      await request(getBroasByUserIdClient(user.id));
+      setFilters({ name: undefined });
+      // await request(getBroasByUserIdClient(user.id));
       return;
     }
 
-    setFilters({ wrongVersion: search });
-    await request(getBroasByUserIdClient(user.id, { wrongVersion: search }));
+    setFilters({ name: search });
+    // await request(getBroasByUserIdClient(user.id, { name: search }));
   };
 
-  const handleSortBy = async (sortBy: BroaSortBy) => {
+  const handleSortBy = async (sortBy: SortBy) => {
     if (!user) return;
     setFilters({ sortBy });
 
@@ -126,14 +126,14 @@ const ProfilePage: NextPage = ({}) => {
   const handleGetNextBoas = async () => {
     if (!user) return;
 
-    const bp = broasPagination;
-    const bfb = broaFilter;
+    const bp = pagination;
+    const bfb = filter;
 
     if (bp.page + 1 >= Math.ceil(bp.total / bp.limit)) return;
     await request(
       getBroasByUserIdClient(user.id, {
         page: bp.page + 1,
-        wrongVersion: bfb.wrongVersion,
+        // wrongVersion: bfb.wrongVersion,
         sortBy: bfb.sortBy,
       })
     );
@@ -142,14 +142,14 @@ const ProfilePage: NextPage = ({}) => {
   const handleGetPreviousBoas = async () => {
     if (!user) return;
 
-    const bp = broasPagination;
-    const bfb = broaFilter;
+    const bp = pagination;
+    const bfb = filter;
 
     if (bp.page < 0) return;
     await request(
       getBroasByUserIdClient(user.id, {
         page: bp.page - 1,
-        wrongVersion: bfb.wrongVersion,
+        // wrongVersion: bfb.wrongVersion,
         sortBy: bfb.sortBy,
       })
     );
@@ -189,7 +189,7 @@ const ProfilePage: NextPage = ({}) => {
         broas={broas}
         onNextPage={handleGetNextBoas}
         onPrevPage={handleGetPreviousBoas}
-        pagination={broasPagination}
+        pagination={pagination}
         onSearch={handleSearch}
         onSortBy={handleSortBy}
         isLoading={loading}

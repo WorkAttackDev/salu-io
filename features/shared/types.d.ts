@@ -18,3 +18,5 @@ export type PaginatedApiResponse<Data> = {
     total: number;
   };
 };
+
+export type SortBy = "recent" | "oldest";

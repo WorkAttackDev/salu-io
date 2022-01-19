@@ -1,0 +1,166 @@
+import { ProjectStatus, Task } from "@prisma/client";
+import React, { useCallback, useEffect, useState } from "react";
+import shallow from "zustand/shallow";
+import {
+  editTaskValidate,
+  EditTaskValidationParams,
+} from "../../../shared/lib/validation/editTaskValidator";
+import Alert from "../../core/components/AlertModal";
+import Loading from "../../core/components/Loading";
+import Modal from "../../core/components/Modal";
+import useDnD from "../../core/hooks/useDnD";
+import useApi from "../../core/hooks/use_api";
+import { useAuthStore } from "../../core/stores/authStore";
+import { useErrorStore } from "../../core/stores/errorStore";
+import { handleClientError } from "../../core/utils/client_errors";
+import { useProjectStore } from "../../project/stores/useProductsStore";
+import { editTaskClient } from "../clientApi/createTaskClient";
+import { deleteTaskClient } from "../clientApi/deleteTaskClient";
+import EditTaskForm from "./EditTaskForm";
+import TaskDetails from "./TaskDetails";
+import TasksList from "./TasksList";
+
+// import { Container } from './styles';
+
+type Props = {
+  className?: string;
+  title: string;
+  tasks: Task[];
+  status: ProjectStatus;
+};
+
+const TasksColumn = ({ className = "", title, tasks, status }: Props) => {
+  const [currTask, setCurrTask] = useState<Task | undefined>();
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [mode, setMode] = useState<"edit" | "delete" | "info">("info");
+
+  const editTaskMutation = useApi<typeof editTaskClient>();
+
+  const deleteTaskMutation = useApi<typeof deleteTaskClient>();
+
+  const { setErrors, setIsOpen } = useErrorStore();
+
+  const { project, setProject } = useProjectStore(
+    (state) => ({
+      project: state.selectedProject,
+      setProject: state.setSelectedProject,
+    }),
+    shallow
+  );
+
+  useEffect(() => {
+    if (editTaskMutation.error) {
+      setErrors(editTaskMutation.error);
+      setIsOpen(true);
+    }
+
+    if (deleteTaskMutation.error) {
+      setErrors(deleteTaskMutation.error);
+      setIsOpen(true);
+    }
+  }, [editTaskMutation.error]);
+
+  const handleSelectTask = useCallback((task: Task) => {
+    setCurrTask(task);
+    setIsModalOpen(true);
+  }, []);
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+
+    setTimeout(() => {
+      setMode("info");
+    }, 1000);
+  };
+
+  const handleUpdateSubmit = async (data: EditTaskValidationParams) => {
+    if (!currTask) return;
+
+    const adjustedData: EditTaskValidationParams & { id?: number } = {
+      ...data,
+      projectId: currTask.projectId,
+      id: currTask.id,
+    };
+
+    try {
+      const ValidatedData = editTaskValidate(adjustedData);
+      const task = await editTaskMutation.request(
+        editTaskClient(ValidatedData)
+      );
+
+      if (!task) return;
+      if (!project?.tasks) return;
+
+      project.tasks = project.tasks.map((t) => (t.id === task.id ? task : t));
+
+      setProject(project);
+      setIsModalOpen(false);
+    } catch (error) {
+      setErrors(handleClientError(error));
+      setIsOpen(true);
+    }
+  };
+
+  const handleDeleteTask = async () => {
+    if (!currTask) return;
+
+    const wasDeleted = await deleteTaskMutation.request(
+      deleteTaskClient(currTask.id)
+    );
+
+    if (!wasDeleted) return;
+
+    if (!project?.tasks) return;
+
+    project.tasks = project.tasks.filter((t) => t.id !== currTask.id);
+
+    setProject(project);
+    setIsModalOpen(false);
+    setMode("info");
+  };
+
+  return (
+    <article
+      className={`flex flex-col snap-start border-2  rounded-lg border-brand-gray-2/30 overflow-hidden min-w-[20rem] max-w-xl md:min-w-[30rem] ${className}`}
+    >
+      <header className='bg-transparent p-4 text-2xl font-semibold'>
+        {title}
+      </header>
+
+      <TasksList tasks={tasks} onSelect={handleSelectTask} status={status} />
+      <Modal
+        title={mode === "delete" ? "Excluir Tarefa" : currTask?.name || ""}
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
+      >
+        {mode === "info" && currTask ? (
+          <TaskDetails
+            task={currTask}
+            onClose={handleCloseModal}
+            onConfirm={() => setMode("edit")}
+            onDelete={() => setMode("delete")}
+          />
+        ) : mode === "edit" ? (
+          <EditTaskForm
+            mode='edit'
+            task={currTask}
+            onSubmit={handleUpdateSubmit}
+            onBack={() => setMode("info")}
+          />
+        ) : mode === "delete" ? (
+          <Alert
+            onClose={() => setMode("info")}
+            onResolve={handleDeleteTask}
+            description={`Deseja excluir a tarefa '${currTask?.name}' ?`}
+          />
+        ) : null}
+      </Modal>
+
+      <Loading
+        isLoading={editTaskMutation.loading || deleteTaskMutation.loading}
+      />
+    </article>
+  );
+};
+
+export default TasksColumn;

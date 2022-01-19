@@ -19,10 +19,10 @@ const Loading = ({ isLoading, className = "", ...props }: Props) => (
   >
     <div
       {...props}
-      className={`absolute z-50 inset-0 flex flex-col justify-center items-center bg-white ${className}`}
+      className={`fixed !m-0 z-50 inset-0 w-full h-full flex flex-col justify-center items-center bg-brand-dark ${className}`}
     >
-      <div className='animate-spin rounded-full h-32 w-32 border-b-2 border-brand-primary'></div>
-      <p className='mt-8 text-xl text-brand-primary-dark'>Carregando...</p>
+      <div className='animate-spin rounded-full h-32 w-32 border-b-2 border-brand'></div>
+      <p className='mt-8 text-xl text-brand'>Carregando...</p>
     </div>
   </Transition>
 );

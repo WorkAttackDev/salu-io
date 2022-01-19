@@ -1,5 +1,6 @@
 import { AxiosError } from "axios";
 import { useState } from "react";
+import { handleClientError } from "../utils/client_errors";
 
 type Awaited<T> = T extends PromiseLike<infer U> ? Awaited<U> : T;
 type ReturnType<T> = T extends (...args: any[]) => infer R ? R : any;
@@ -19,11 +20,7 @@ const useApi = <Fn extends Function>() => {
       setData(result);
       return result;
     } catch (err) {
-      const axiosErr: string[] = (err as AxiosError).response?.data.errors;
-
-      axiosErr
-        ? setError(axiosErr)
-        : setError([(err as Error).message || "Unexpected Error!"]);
+      setError(handleClientError(err));
       return null;
     } finally {
       setLoading(false);

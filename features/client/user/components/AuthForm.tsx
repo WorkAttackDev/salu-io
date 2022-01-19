@@ -1,42 +1,18 @@
-import jwt_decode from "jwt-decode";
 import Link from "next/link";
-import { useEffect } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
-import {
-  LoginValidationParams,
-  LoginWithGoogleValidationParams,
-} from "../../../shared/lib/validation";
-import { EditProjectValidationParams } from "../../../shared/lib/validation/editProjectValidator";
+import { LoginValidationParams } from "../../../shared/lib/validation";
 import Button from "../../core/components/Button";
 import InputField from "../../core/components/InputField";
 import { linksObj } from "../../core/data/links";
-import { initializeGoogleLogin } from "../utils";
 
 type Props = {
   onSubmit: SubmitHandler<LoginValidationParams>;
-  onLoginWithGoogle?: (data: LoginWithGoogleValidationParams) => void;
   type?: "login" | "signup" | "forgot-password" | "reset-password";
   submitText: string;
 };
 
-export const AuthForm = ({
-  onSubmit,
-  submitText,
-  onLoginWithGoogle,
-  type = "login",
-}: Props) => {
+export const AuthForm = ({ onSubmit, submitText, type = "login" }: Props) => {
   const { register, handleSubmit } = useForm<LoginValidationParams>();
-
-  useEffect(() => {
-    if (type !== "login") return;
-
-    async function handleCredentialResponse(response: any) {
-      const decodedToken = jwt_decode(response.credential) as any;
-      onLoginWithGoogle?.(decodedToken);
-    }
-
-    initializeGoogleLogin(handleCredentialResponse);
-  }, [type]);
 
   return (
     <form
@@ -58,7 +34,7 @@ export const AuthForm = ({
                 {linksObj.login.label}
               </a>
             </Link>
-            <button
+            {/* <button
               type='button'
               disabled
               className={` w-full border-b-2 ${
@@ -68,7 +44,7 @@ export const AuthForm = ({
               } disabled:cursor-not-allowed`}
             >
               {linksObj.signup.label}
-            </button>
+            </button> */}
           </>
         ) : (
           <p
@@ -78,7 +54,7 @@ export const AuthForm = ({
           </p>
         )}
       </div>
-      <fieldset className='grid gap-8 px-16'>
+      <fieldset className='grid items-start gap-8 px-16'>
         {type !== "reset-password" && (
           <InputField
             autoComplete='on'

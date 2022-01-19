@@ -5,7 +5,7 @@ import Loading from "../../features/client/core/components/Loading";
 import MainLayout from "../../features/client/core/components/MainLayout";
 import Popup from "../../features/client/core/components/Popup";
 import useApi from "../../features/client/core/hooks/use_api";
-import { handleClientValidationError } from "../../features/client/core/utils/client_errors";
+import { handleClientError } from "../../features/client/core/utils/client_errors";
 import { forgetPasswordClient } from "../../features/client/user/client";
 import { AuthForm } from "../../features/client/user/components/AuthForm";
 import {
@@ -25,7 +25,7 @@ const ForgetPasswordPage: NextPage = () => {
 
       if (!resData) return;
     } catch (error) {
-      console.log(handleClientValidationError(error));
+      console.log(handleClientError(error));
     }
   };
 

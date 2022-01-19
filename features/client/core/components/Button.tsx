@@ -7,7 +7,7 @@ type Props = DetailedHTMLProps<
 > & {
   Icon?: (props: React.ComponentProps<"svg">) => JSX.Element;
   size?: "md" | "sm";
-  theme?: "primary" | "secondary";
+  theme?: "primary" | "secondary" | "danger";
   isLoading?: boolean;
 };
 
@@ -22,13 +22,15 @@ const Button: React.FC<Props> = ({
   ...props
 }) => {
   const buttonSizeClass =
-    size === "md" ? "px-6 py-4 text-xl font-medium" : "px-4 py-2 text-base";
+    size === "md" ? "px-6 py-4 text-xl font-medium" : "px-5 py-3 text-lg";
   const iconSizeClass = size === "md" ? "w-7 h-7" : "w-6 h-6";
 
   const buttonThemeClass =
     theme === "primary"
       ? "bg-brand/70 text-white shadow-[0_0_2rem_transparent] hover:bg-brand hover:shadow-brand/40"
-      : "bg-transparent border-2 border-brand-gray/20 hover:bg-brand-gray-2 hover:text-white";
+      : theme === "secondary"
+      ? "bg-transparent border-2 border-brand-gray/20 hover:bg-brand-gray-2 hover:text-white"
+      : "bg-transparent border-2 border-red-600/30 hover:bg-red-600/50 hover:text-white";
 
   const iconLoadingClass = isLoading ? "animate-bounce" : "";
 
@@ -39,7 +41,7 @@ const Button: React.FC<Props> = ({
   return (
     <button
       disabled={disabled || isLoading}
-      className={`${buttonSizeClass} ${buttonThemeClass} ${buttonDisabledClass} h-fit flex justify-between items-center rounded-lg  leading-none duration-300 ${className}`}
+      className={`${buttonSizeClass} ${buttonThemeClass} ${buttonDisabledClass} h-fit flex justify-between items-center rounded-lg leading-none duration-300 ${className}`}
       {...props}
     >
       {Icon && <Icon className={`${iconSizeClass} ${iconLoadingClass} mr-2`} />}

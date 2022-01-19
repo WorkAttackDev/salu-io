@@ -1,4 +1,7 @@
-import { ProjectStatus } from "@prisma/client";
+import { Project, ProjectStatus } from "@prisma/client";
+import dayjs from "dayjs";
+import Link from "next/link";
+import { useRouter } from "next/router";
 import { useForm } from "react-hook-form";
 import { EditProjectValidationParams } from "../../../shared/lib/validation/editProjectValidator";
 import Button from "../../core/components/Button";
@@ -15,24 +18,40 @@ const statusOptions = [
 type Props = {
   onSubmit: (data: EditProjectValidationParams) => void;
   isLoading?: boolean;
+  project?: Project;
+  mode?: "create" | "edit";
 };
 
-const EditProjectForm = ({ onSubmit, isLoading }: Props) => {
-  const { register, handleSubmit } = useForm<EditProjectValidationParams>();
+const EditProjectForm = ({
+  onSubmit,
+  isLoading,
+  project,
+  mode = "create",
+}: Props) => {
+  const { register, handleSubmit, watch } =
+    useForm<EditProjectValidationParams>({});
+
+  const { back } = useRouter();
+
+  const startDateValue = watch("startDate");
+
+  console.log(startDateValue);
 
   return (
-    <form
-      className='flex flex-col space-y-12'
-      onSubmit={handleSubmit(onSubmit)}
-    >
-      <div className='flex space-x-8'>
+    <form className='flex flex-col space-y-8' onSubmit={handleSubmit(onSubmit)}>
+      <div className='grid grid-flow-row gap-8 sm:grid-flow-col'>
         <InputField
           labelText='Nome'
-          wrapperClassName='w-2/3'
+          defaultValue={project?.name || ""}
+          wrapperClassName='col-span-2'
           {...register("name")}
           autoComplete='on'
         />
-        <SelectField labelText='Estado' {...register("status")}>
+        <SelectField
+          defaultValue={project?.status}
+          labelText='Estado'
+          {...register("status")}
+        >
           {statusOptions.map((option) => (
             <option
               key={option.value}
@@ -44,24 +63,43 @@ const EditProjectForm = ({ onSubmit, isLoading }: Props) => {
           ))}
         </SelectField>
       </div>
-      <TextAreaField labelText='Descrição' {...register("description")} />
-      <div className='flex space-x-8'>
+      <TextAreaField
+        defaultValue={project?.description || ""}
+        labelText='Descrição'
+        {...register("description")}
+      />
+      <div className='grid grid-flow-row gap-8 sm:grid-flow-col'>
         <InputField
+          min='2022-01-01T00:00'
+          defaultValue={
+            project
+              ? dayjs(project.startDate).toISOString().replaceAll(".000Z", "")
+              : ""
+          }
           labelText='Data Início'
           type='datetime-local'
-          wrapperClassName='w-1/2'
+          wrapperClassName=''
           {...register("startDate")}
         />
         <InputField
+          min={startDateValue || "2022-01-01T00:00"}
+          defaultValue={
+            project
+              ? dayjs(project.endDate).toISOString().replaceAll(".000Z", "")
+              : ""
+          }
           labelText='Data Termino'
           type='datetime-local'
-          wrapperClassName='w-1/2'
+          wrapperClassName=''
           {...register("endDate")}
         />
       </div>
-      <div className='flex space-x-8'>
-        <Button isLoading={isLoading}>Criar Projeto</Button>
-        <Button theme='secondary' type='button'>
+      <div className='flex items-center space-x-8'>
+        <Button isLoading={isLoading}>{`${
+          mode === "create" ? "Criar" : "Editar"
+        } Projeto`}</Button>
+
+        <Button theme='secondary' type='button' onClick={back}>
           Cancelar
         </Button>
       </div>

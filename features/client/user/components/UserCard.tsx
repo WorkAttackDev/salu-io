@@ -12,9 +12,10 @@ import { logoutClient } from "../client";
 
 type Props = {
   className?: string;
+  isExpanded?: boolean;
 };
 
-const UserCard = ({ className = "" }: Props) => {
+const UserCard = ({ className = "", isExpanded }: Props) => {
   const { user, setUser, setToken } = useAuthStore();
   const { replace } = useRouter();
 
@@ -37,7 +38,9 @@ const UserCard = ({ className = "" }: Props) => {
 
   return (
     <div
-      className={`grid grid-flow-col rounded-lg bg-brand-gray-2/50 overflow-hidden ${className}`}
+      className={`${
+        isExpanded ? "grid" : "hidden"
+      }  grid-flow-col rounded-lg bg-brand-gray-2/50 overflow-hidden ${className}`}
     >
       <span className='grid gap-4 grid-flow-col items-center p-4'>
         <span className='w-16 h-16 bg-brand-gray rounded-lg'>
@@ -51,7 +54,7 @@ const UserCard = ({ className = "" }: Props) => {
             />
           )}
         </span>
-        <p className='text-xl'>{user?.name || "Iniciar Sessão"}</p>
+        <p className={`text-xl`}>{user?.name || "Iniciar Sessão"}</p>
       </span>
       {user ? (
         <button

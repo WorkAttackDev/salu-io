@@ -2,6 +2,7 @@ import { sign, verify } from "jsonwebtoken";
 import { NextApiRequest, NextApiResponse } from "next";
 import Cookies from "cookies";
 import prisma from "../../../client/core/config/prisma";
+import { isProduction } from "../../../client/core/utils";
 
 type IssueJWTokenParams = {
   req: NextApiRequest;
@@ -10,7 +11,7 @@ type IssueJWTokenParams = {
   userId: string;
 };
 
-export const REFRESH_TOKEN_COOKIE_NAME = "wabrf_ao";
+export const REFRESH_TOKEN_COOKIE_NAME = "__wasalurft__ao";
 
 export const API_SECRET = process.env.API_SECRET || "qwerty";
 
@@ -31,7 +32,9 @@ export const issueJWToken = async ({
     where: { id: +userId, AND: { type: "REFRESH_TOKEN" } },
   });
 
-  const expiresAt = Date.now() + 86400000 * 120; // 4 mouths;
+  const fourMonths = 86400000 * 120;
+
+  const expiresAt = Date.now() + fourMonths;
 
   const refetchToken = await prisma.token.create({
     data: {
@@ -47,11 +50,12 @@ export const issueJWToken = async ({
 
   cookies.set(REFRESH_TOKEN_COOKIE_NAME, refetchToken.token, {
     httpOnly: true,
-    // secure: true,
-    maxAge: expiresAt,
-    expires: new Date(expiresAt),
+    secure: isProduction ? true : false,
+    maxAge: fourMonths,
     signed: true,
     path: "/",
+    domain: isProduction ? "salu.io.vercel.app" : "localhost",
+    sameSite: "lax",
   });
 
   return {

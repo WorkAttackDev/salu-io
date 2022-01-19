@@ -14,6 +14,7 @@ export const refreshTokenController = async (
   res: NextApiResponse<ApiResponse<string>>
 ) => {
   const cookies = new Cookies(req, res, { keys: [API_SECRET] });
+
   const refreshToken = cookies.get(REFRESH_TOKEN_COOKIE_NAME, {
     signed: true,
   });
