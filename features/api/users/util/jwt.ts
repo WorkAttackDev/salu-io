@@ -50,13 +50,12 @@ export const issueJWToken = async ({
 
   cookies.set(REFRESH_TOKEN_COOKIE_NAME, refetchToken.token, {
     httpOnly: true,
-    secure: isProduction ? true : false,
+    secure: false,
     maxAge: fourMonths,
     signed: true,
     path: "/",
     domain: HOST,
     sameSite: "lax",
-    secureProxy: isProduction ? true : false,
   });
 
   return {
