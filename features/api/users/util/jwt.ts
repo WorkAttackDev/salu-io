@@ -11,7 +11,9 @@ type IssueJWTokenParams = {
   userId: string;
 };
 
-export const REFRESH_TOKEN_COOKIE_NAME = "__wasalurft__ao";
+export const REFRESH_TOKEN_COOKIE_NAME = isProduction
+  ? "__wasalurft_prod__ao"
+  : "__wasalurft__ao";
 
 export const API_SECRET = process.env.API_SECRET || "qwerty";
 
