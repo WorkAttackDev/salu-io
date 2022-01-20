@@ -70,7 +70,7 @@ const ProjectCard = ({ project }: Props) => {
       <p className='text-lg line-clamp-3'>{description}</p>
       <span className='flex items-start text-brand-gray-1 '>
         <CalendarIcon className='w-6 h-6 mr-4' />
-        <p className='text-lg'>{"Termina " + day(endDate).to(day())}</p>
+        <p className='text-lg'>{"Termina " + day(day()).to(endDate)}</p>
       </span>
       <Link href={linksObj.project.url(id)}>
         <a>
