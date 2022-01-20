@@ -36,22 +36,30 @@ function MyApp({ Component, pageProps }: AppProps) {
     router.events.on("routeChangeComplete", handleRouteChangeOff);
     router.events.on("routeChangeError", handleRouteChangeOff);
 
+    let timeoutRef: NodeJS.Timeout;
+
+    if (!user) {
+      setLoading(true);
+      timeoutRef = setTimeout(() => {
+        setLoading(false);
+      }, 2000);
+    }
+
     (async () => {
+      setLoading(true);
       const meUser = await meQuery.request(meClient());
+      setLoading(false);
       if (!meUser) return;
       setUser(meUser);
     })();
 
     return () => {
+      clearTimeout(timeoutRef);
       router.events.off("routeChangeStart", handleRouteChangeOn);
       router.events.off("routeChangeComplete", handleRouteChangeOff);
       router.events.off("routeChangeError", handleRouteChangeOff);
     };
   }, []);
-
-  useEffect(() => {
-    if (!user) return;
-  }, [user]);
 
   return (
     <div className='flex h-full'>

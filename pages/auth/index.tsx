@@ -28,7 +28,15 @@ const LoginPage: NextPage = () => {
 
   const { setToken, setUser } = useAuthStore();
 
+  const user = useAuthStore((state) => state.user);
+
   const { setErrors, setIsOpen } = useErrorStore();
+
+  useEffect(() => {
+    if (user) {
+      replace("/");
+    }
+  }, [user]);
 
   useEffect(() => {
     if (loginMutation.error) {
