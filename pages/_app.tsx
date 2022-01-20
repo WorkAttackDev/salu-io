@@ -1,4 +1,5 @@
 import type { AppProps } from "next/app";
+import Head from "next/head";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import Script from "next/script";
@@ -6,6 +7,7 @@ import React, { useEffect, useState } from "react";
 import Button from "../features/client/core/components/Button";
 import Loading from "../features/client/core/components/Loading";
 import MainLayout from "../features/client/core/components/MainLayout";
+import MetaInfo from "../features/client/core/components/MetaInfo";
 import Popup from "../features/client/core/components/Popup";
 import SectionHeader from "../features/client/core/components/SectionHeader";
 import SideNav from "../features/client/core/components/SideNav";
@@ -53,6 +55,8 @@ function MyApp({ Component, pageProps }: AppProps) {
 
   return (
     <div className='flex h-full'>
+      <MetaInfo />
+
       {!isAuthRoute && <SideNav />}
       {user || isAuthRoute ? (
         <Component {...pageProps} />
