@@ -14,7 +14,7 @@ const Page404: React.FC = () => {
       <nav className='flex flex-wrap items-baseline space-y-4 space-x-4 sm:space-y-0'>
         <p className='text-xl text-brand-gray-1'>Talvez você procura por: </p>
         {navLinks.map((link) => (
-          <Link href={link.url}>
+          <Link key={link.label} href={link.url}>
             <a className='text-xl text-brand-gray-2 hover:text-brand'>
               {link.label}
             </a>

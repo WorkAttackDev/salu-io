@@ -14,8 +14,6 @@ export const validationErrorMessages = {
 
 export type ValidationError = ZodError;
 
-//* BROAS VALIDATION
-
 //* AUTH VALIDATION
 //* Auth login validation
 

@@ -28,7 +28,7 @@ export const getProjectByIdController = async (
       return;
     }
 
-    res.status(200).json({ data: project, errors: null });
+    res.status(200).json({ data: project as MyProjectTasks, errors: null });
   } catch (error) {
     console.log(error);
     handleServerError(res, 500, ["Erro ao carregar os dados"]);
