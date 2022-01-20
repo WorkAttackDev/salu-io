@@ -56,6 +56,7 @@ export const issueJWToken = async ({
     path: "/",
     domain: HOST,
     sameSite: "lax",
+    secureProxy: isProduction ? true : false,
   });
 
   return {
