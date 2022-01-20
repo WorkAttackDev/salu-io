@@ -7,10 +7,9 @@ import {
 } from "../../../shared/lib/server_errors";
 import { forgetPasswordValidate } from "../../../shared/lib/validation";
 import { ApiResponse } from "../../../shared/types";
+import { HOST } from "../../../shared/utils";
 import { sendEmail } from "../../core/config/email/email";
 import { forgetPasswordHTMLTemplate } from "../../core/config/email/templates/forget_password";
-
-const host = process.env.HOST;
 
 export const forgetPasswordController = async (
   req: NextApiRequest,
@@ -50,7 +49,7 @@ export const forgetPasswordController = async (
         user.email,
         "Recuperação de Password",
         forgetPasswordHTMLTemplate(
-          host + "/auth/reset-password?token=" + token.token
+          HOST + "/auth/reset-password?token=" + token.token
         )
       );
 

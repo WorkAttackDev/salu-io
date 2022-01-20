@@ -1,11 +1,11 @@
 import axios, { AxiosResponse } from "axios";
 import { ApiResponse } from "../../../shared/types";
+import { HOST } from "../../../shared/utils";
 import { AuthRefreshTokenEndpoint } from "../../user/client";
 import { globalSetToken, useAuthStore } from "../stores/authStore";
-import { HOST } from "../utils";
 
 export const AxiosInstance = axios.create({
-  baseURL: HOST + "/api",
+  baseURL: HOST + "api/",
   withCredentials: true,
 });
 
