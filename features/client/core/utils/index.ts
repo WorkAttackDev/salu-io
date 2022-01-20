@@ -23,3 +23,5 @@ export const sortByDate = <ListModel extends SortByDateArgs>(
 };
 
 export const isProduction = process.env.NODE_ENV === "production";
+
+export const HOST = process.env.HOST || "http://localhost:3000";

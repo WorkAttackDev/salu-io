@@ -2,13 +2,10 @@ import axios, { AxiosResponse } from "axios";
 import { ApiResponse } from "../../../shared/types";
 import { AuthRefreshTokenEndpoint } from "../../user/client";
 import { globalSetToken, useAuthStore } from "../stores/authStore";
-
-const isProd = process.env.NODE_ENV === "production";
+import { HOST } from "../utils";
 
 export const AxiosInstance = axios.create({
-  baseURL: isProd
-    ? "https://salu-io.vercel.app/api"
-    : "http://localhost:3000/api",
+  baseURL: HOST + "/api",
   withCredentials: true,
 });
 

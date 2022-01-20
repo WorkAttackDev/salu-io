@@ -2,7 +2,7 @@ import { sign, verify } from "jsonwebtoken";
 import { NextApiRequest, NextApiResponse } from "next";
 import Cookies from "cookies";
 import prisma from "../../../client/core/config/prisma";
-import { isProduction } from "../../../client/core/utils";
+import { HOST, isProduction } from "../../../client/core/utils";
 
 type IssueJWTokenParams = {
   req: NextApiRequest;
@@ -54,7 +54,7 @@ export const issueJWToken = async ({
     maxAge: fourMonths,
     signed: true,
     path: "/",
-    domain: isProduction ? "salu.io.vercel.app" : "localhost",
+    domain: HOST,
     sameSite: "lax",
   });
 
