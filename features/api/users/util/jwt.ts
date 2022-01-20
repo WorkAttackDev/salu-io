@@ -2,7 +2,7 @@ import { sign, verify } from "jsonwebtoken";
 import { NextApiRequest, NextApiResponse } from "next";
 import Cookies from "cookies";
 import prisma from "../../../client/core/config/prisma";
-import { HOST, isProduction } from "../../../shared/utils";
+import { DOMAIN, HOST, isProduction } from "../../../shared/utils";
 
 type IssueJWTokenParams = {
   req: NextApiRequest;
@@ -56,7 +56,7 @@ export const issueJWToken = async ({
     maxAge: fourMonths,
     signed: true,
     path: "/",
-    domain: HOST,
+    domain: DOMAIN,
     sameSite: "lax",
   });
 
