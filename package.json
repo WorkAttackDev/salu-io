@@ -12,7 +12,7 @@
     "lint": "next lint",
     "test": "jest --watch",
     "postinstall": "npx prisma generate",
-    "db:seed": "npx prisma db seed"
+    "postbuild": "npx prisma db seed"
   },
   "dependencies": {
     "@headlessui/react": "^1.4.2",
