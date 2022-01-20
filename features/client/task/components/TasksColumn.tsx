@@ -6,7 +6,7 @@ import {
   EditTaskValidationParams,
 } from "../../../shared/lib/validation/editTaskValidator";
 import { MyTask } from "../../../shared/models/myTask";
-import Alert from "../../core/components/AlertModal";
+import Alert from "../../core/components/Alert";
 import Loading from "../../core/components/Loading";
 import Modal from "../../core/components/Modal";
 import { DnDItemType } from "../../core/hooks/useDnD";

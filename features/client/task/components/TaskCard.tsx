@@ -50,7 +50,7 @@ const TaskCard = ({ task, onSelect, onMoveCard }: Props) => {
   const calculateRemainTime = (task: Task) => {
     if (!task.endDate || !task.startDate) return "indefinido";
 
-    return dayjs(task.startDate).to(dayjs(task.endDate));
+    return dayjs(dayjs()).to(dayjs(task.endDate));
   };
 
   const handleOnDrop = ([dragged]:

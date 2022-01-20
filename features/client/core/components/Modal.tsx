@@ -6,7 +6,7 @@ type Props = {
   isOpen: boolean;
   className?: string;
   titleClassName?: string;
-  onClose: () => void;
+  onClose?: () => void;
 };
 
 const Modal: React.FC<Props> = ({
@@ -23,7 +23,7 @@ const Modal: React.FC<Props> = ({
         <Dialog
           as='div'
           className='fixed inset-0 z-10 overflow-y-auto'
-          onClose={onClose}
+          onClose={() => onClose?.()}
         >
           <div className='min-h-screen px-4 text-center'>
             <Transition.Child

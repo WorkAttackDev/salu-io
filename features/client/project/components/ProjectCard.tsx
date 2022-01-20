@@ -1,22 +1,23 @@
 import { CalendarIcon } from "@heroicons/react/outline";
 import { Project } from "@prisma/client";
-import React from "react";
-import Button from "../../core/components/Button";
 import day from "dayjs";
-import relativeTime from "dayjs/plugin/relativeTime";
 import "dayjs/locale/pt-br";
+import relativeTime from "dayjs/plugin/relativeTime";
 import Link from "next/link";
-import { linksObj } from "../../core/data/links";
+import { useRouter } from "next/router";
+import React, { useState } from "react";
+import Alert from "../../core/components/Alert";
+import Button from "../../core/components/Button";
+import Loading from "../../core/components/Loading";
+import Modal from "../../core/components/Modal";
 import OptionDropdown, {
   OptionDropdownItem,
 } from "../../core/components/OptionDropdown";
-import { useRouter } from "next/router";
+import { linksObj } from "../../core/data/links";
 import useApi from "../../core/hooks/use_api";
-import { deleteProjectClient } from "../clientApi/deleteProjectClient";
 import { useAuthStore } from "../../core/stores/authStore";
+import { deleteProjectClient } from "../clientApi/deleteProjectClient";
 import { useProjectStore } from "../stores/useProductsStore";
-import shallow from "zustand/shallow";
-import Loading from "../../core/components/Loading";
 
 day.extend(relativeTime);
 day.locale("pt-br");
@@ -29,12 +30,15 @@ const ProjectCard = ({ project }: Props) => {
   const { id, name, description, startDate, endDate } = project;
   const { push } = useRouter();
   const user = useAuthStore((state) => state.user);
+
   const { setProjects, projects } = useProjectStore((s) => ({
     setProjects: s.setProjects,
     projects: s.projects,
   }));
 
   const deleteProjectMutation = useApi<typeof deleteProjectClient>();
+
+  const [showAlert, setShowAlert] = useState(false);
 
   const cardActions: OptionDropdownItem[] = [
     {
@@ -45,7 +49,7 @@ const ProjectCard = ({ project }: Props) => {
     {
       label: "Excluir",
       value: "delete",
-      onClick: () => handleDeleteProject(),
+      onClick: () => setShowAlert(true),
     },
   ];
 
@@ -77,6 +81,13 @@ const ProjectCard = ({ project }: Props) => {
           <Button>Entrar</Button>
         </a>
       </Link>
+      <Modal isOpen={showAlert} title='Apagar projeto'>
+        <Alert
+          onClose={() => setShowAlert(false)}
+          onResolve={handleDeleteProject}
+          description='Ao apagar este projeto perderá todos os dados e tarefas relacionados com o mesmo!'
+        />
+      </Modal>
       <Loading isLoading={deleteProjectMutation.loading} />
     </li>
   );

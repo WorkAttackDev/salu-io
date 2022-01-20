@@ -1,10 +1,9 @@
 import React from "react";
 import Button from "./Button";
-import Modal from "./Modal";
 
 type Props = {
   description: string;
-  onClose: () => void;
+  onClose?: () => void;
   onResolve: () => void;
 };
 
