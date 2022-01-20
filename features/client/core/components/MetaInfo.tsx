@@ -43,7 +43,7 @@ const MetaInfo: React.FC = () => {
       {/* extra */}
       <meta name='keywords' content='workattack, management, tool' />
       <meta name='robots' content='index, nofollow' />
-      <meta http-equiv='Content-Type' content='text/html; charset=utf-8' />
+      <meta httpEquiv='Content-Type' content='text/html; charset=utf-8' />
       <meta name='language' content='Portuguese' />
       <meta name='author' content='Work Attack' />
     </Head>

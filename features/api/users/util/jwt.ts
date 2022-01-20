@@ -31,7 +31,17 @@ export const issueJWToken = async ({
   if (!generateRefreshToken) return { token, refreshToken: null };
 
   await prisma.token.deleteMany({
-    where: { id: +userId, AND: { type: "REFRESH_TOKEN" } },
+    where: {
+      userId: +userId,
+      AND: {
+        type: "REFRESH_TOKEN",
+        AND: {
+          expiresAt: {
+            lte: new Date(),
+          },
+        },
+      },
+    },
   });
 
   const fourMonths = 86400000 * 120;
