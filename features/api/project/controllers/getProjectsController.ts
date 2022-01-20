@@ -1,5 +1,6 @@
 import { Project } from "@prisma/client";
 import { NextApiRequest, NextApiResponse } from "next";
+import prisma from "../../../client/core/config/prisma";
 import { handleServerError } from "../../../shared/lib/server_errors";
 import { PaginatedApiResponse } from "../../../shared/types";
 
