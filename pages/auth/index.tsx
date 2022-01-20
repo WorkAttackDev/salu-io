@@ -1,6 +1,6 @@
 import { NextPage } from "next";
 import { useRouter } from "next/router";
-import React from "react";
+import React, { useEffect } from "react";
 import { SubmitHandler } from "react-hook-form";
 import Loading from "../../features/client/core/components/Loading";
 import MainLayout from "../../features/client/core/components/MainLayout";
@@ -29,6 +29,14 @@ const LoginPage: NextPage = () => {
   const { setToken, setUser } = useAuthStore();
 
   const { setErrors, setIsOpen } = useErrorStore();
+
+  useEffect(() => {
+    if (loginMutation.error) {
+      setErrors(loginMutation.error);
+      setIsOpen(true);
+      return;
+    }
+  }, [loginMutation.error]);
 
   const handleOnSubmit: SubmitHandler<LoginValidationParams> = async (data) => {
     try {
