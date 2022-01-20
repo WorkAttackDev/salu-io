@@ -1,30 +1,34 @@
 import { NextPage } from "next";
 import { useRouter } from "next/router";
-import React, { useEffect, useRef, useState } from "react";
-import { SubmitHandler, useForm } from "react-hook-form";
+import React, { useEffect, useRef } from "react";
 import Loading from "../../features/client/core/components/Loading";
 import MainLayout from "../../features/client/core/components/MainLayout";
-import Popup from "../../features/client/core/components/Popup";
+import SectionHeader from "../../features/client/core/components/SectionHeader";
+import { linksObj } from "../../features/client/core/data/links";
 import useApi from "../../features/client/core/hooks/use_api";
+import { useErrorStore } from "../../features/client/core/stores/errorStore";
+import { handleClientError } from "../../features/client/core/utils/client_errors";
 import { resetPasswordClient } from "../../features/client/user/client";
 import { AuthForm } from "../../features/client/user/components/AuthForm";
-import { ResetPasswordParams } from "../../features/shared/lib/validation";
+import {
+  ResetPasswordParams,
+  resetPasswordValidate,
+} from "../../features/shared/lib/validation";
+
+type ResetPasswordType = Omit<ResetPasswordParams, "token">;
 
 const ResetPasswordPage: NextPage = () => {
   const { query, replace } = useRouter();
 
-  const [showPopup, setShowPopup] = useState(false);
-
   const resetPasswordMutation = useApi<typeof resetPasswordClient>();
   const token = useRef("");
 
-  const { register, handleSubmit } = useForm<ResetPasswordParams>();
+  const { setErrors, setIsOpen } = useErrorStore();
 
   useEffect(() => {
     const qToken = query.token as string | undefined;
 
     if (!qToken) {
-      replace("/404");
       return;
     }
 
@@ -32,46 +36,62 @@ const ResetPasswordPage: NextPage = () => {
   }, [query, replace]);
 
   useEffect(() => {
-    if (resetPasswordMutation.error) setShowPopup(true);
+    if (resetPasswordMutation.error) {
+      setErrors(resetPasswordMutation.error);
+      setIsOpen(true);
+    }
   }, [resetPasswordMutation.error]);
 
-  const handleOnSubmit = async () => {
-    if (!token) return;
+  const handleOnSubmit = async (data: ResetPasswordType) => {
+    if (!token) {
+      setErrors(["Código de verificação não encontrado"]);
+      setIsOpen(true);
+      return;
+    }
 
-    // if (formValues.password !== formValues.againPassword) {
-    //   return resetPasswordMutation.setError(["passwords são diferentes"]);
-    // }
+    if (data.password !== data.verifyPassword) {
+      setErrors(["As passwords são diferentes"]);
+      setIsOpen(true);
+      return;
+    }
 
-    // try {
-    //   // const formData = resetPasswordValidate({
-    //   //   ...formValues,
-    //   //   token: token.current,
-    //   // });
+    try {
+      const formData = resetPasswordValidate({
+        ...data,
+        token: token.current,
+      });
 
-    //   const data = await resetPasswordMutation.request(
-    //     resetPasswordClient(formData)
-    //   );
+      await resetPasswordMutation.request(resetPasswordClient(formData));
 
-    //   if (!data) return;
-    //   replace(links.login);
-    // } catch (error) {
-    //   resetPasswordMutation.setError(handleClientError(error));
-    // }
+      if (!data) return;
+
+      replace(linksObj.login.url);
+    } catch (error) {
+      setErrors(handleClientError(error));
+      setIsOpen(true);
+    }
   };
 
   return (
-    <MainLayout className='flex justify-center align-center'>
+    <MainLayout className='flex justify-center align-center w-full'>
       <Loading className='h-full' isLoading={resetPasswordMutation.loading} />
-      <AuthForm
-        submitText='salvar password'
-        type='reset-password'
-        onSubmit={handleOnSubmit}
-      />
-      <Popup
-        isOpen={showPopup}
-        texts={resetPasswordMutation.error || []}
-        onClose={() => setShowPopup(false)}
-      />
+      {token.current ? (
+        <AuthForm
+          submitText='salvar password'
+          type='reset-password'
+          onSubmit={(data) => handleOnSubmit(data as ResetPasswordType)}
+        />
+      ) : (
+        <div>
+          <SectionHeader
+            title='Código de verificação inválido'
+            className='mb-8'
+          />
+          <p className='text-xl text-brand-gray-1'>
+            Não foi possível encontrar o código de verificação.
+          </p>
+        </div>
+      )}
     </MainLayout>
   );
 };

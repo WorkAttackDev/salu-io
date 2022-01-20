@@ -5,14 +5,24 @@ import Button from "../../core/components/Button";
 import InputField from "../../core/components/InputField";
 import { linksObj } from "../../core/data/links";
 
-type Props = {
-  onSubmit: SubmitHandler<LoginValidationParams>;
+type ValidationParams = {
+  email: string;
+  password: string;
+  verifyPassword?: string;
+};
+
+type Props<VP> = {
+  onSubmit: SubmitHandler<VP>;
   type?: "login" | "signup" | "forgot-password" | "reset-password";
   submitText: string;
 };
 
-export const AuthForm = ({ onSubmit, submitText, type = "login" }: Props) => {
-  const { register, handleSubmit } = useForm<LoginValidationParams>();
+export const AuthForm = ({
+  onSubmit,
+  submitText,
+  type = "login",
+}: Props<ValidationParams>) => {
+  const { register, handleSubmit } = useForm<ValidationParams>();
 
   return (
     <form
@@ -78,7 +88,7 @@ export const AuthForm = ({ onSubmit, submitText, type = "login" }: Props) => {
             type='password'
             labelText='digite novamente a password'
             maxLength={250}
-            {...register("password")}
+            {...register("verifyPassword")}
           />
         )}
       </fieldset>

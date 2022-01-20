@@ -1,16 +1,16 @@
-import { ProjectStatus, Task } from "@prisma/client";
+import { ProjectStatus } from "@prisma/client";
 import React, { useCallback, useEffect, useState } from "react";
 import shallow from "zustand/shallow";
 import {
   editTaskValidate,
   EditTaskValidationParams,
 } from "../../../shared/lib/validation/editTaskValidator";
+import { MyTask } from "../../../shared/models/myTask";
 import Alert from "../../core/components/AlertModal";
 import Loading from "../../core/components/Loading";
 import Modal from "../../core/components/Modal";
-import useDnD from "../../core/hooks/useDnD";
+import { DnDItemType } from "../../core/hooks/useDnD";
 import useApi from "../../core/hooks/use_api";
-import { useAuthStore } from "../../core/stores/authStore";
 import { useErrorStore } from "../../core/stores/errorStore";
 import { handleClientError } from "../../core/utils/client_errors";
 import { useProjectStore } from "../../project/stores/useProductsStore";
@@ -25,12 +25,12 @@ import TasksList from "./TasksList";
 type Props = {
   className?: string;
   title: string;
-  tasks: Task[];
+  tasks: MyTask[];
   status: ProjectStatus;
 };
 
 const TasksColumn = ({ className = "", title, tasks, status }: Props) => {
-  const [currTask, setCurrTask] = useState<Task | undefined>();
+  const [currTask, setCurrTask] = useState<MyTask | undefined>();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [mode, setMode] = useState<"edit" | "delete" | "info">("info");
 
@@ -60,7 +60,7 @@ const TasksColumn = ({ className = "", title, tasks, status }: Props) => {
     }
   }, [editTaskMutation.error]);
 
-  const handleSelectTask = useCallback((task: Task) => {
+  const handleSelectTask = useCallback((task: MyTask) => {
     setCurrTask(task);
     setIsModalOpen(true);
   }, []);
@@ -74,12 +74,12 @@ const TasksColumn = ({ className = "", title, tasks, status }: Props) => {
   };
 
   const handleUpdateSubmit = async (data: EditTaskValidationParams) => {
-    if (!currTask) return;
+    if (!currTask && !data.id) return;
 
     const adjustedData: EditTaskValidationParams & { id?: number } = {
       ...data,
-      projectId: currTask.projectId,
-      id: currTask.id,
+      projectId: data.projectId || currTask!.projectId,
+      id: data.id || currTask!.id,
     };
 
     try {
@@ -119,6 +119,23 @@ const TasksColumn = ({ className = "", title, tasks, status }: Props) => {
     setMode("info");
   };
 
+  const handleMoveCard = async (data: DnDItemType) => {
+    const movedTask = project?.tasks?.find((task) => task.id === data.id);
+
+    console.log(movedTask);
+
+    if (!movedTask) return;
+
+    const adjustedData: EditTaskValidationParams & { id?: number } = {
+      ...movedTask,
+      description: movedTask.description!,
+      startDate: movedTask.startDate as string | undefined,
+      endDate: movedTask.endDate as string | undefined,
+    };
+
+    await handleUpdateSubmit(adjustedData);
+  };
+
   return (
     <article
       className={`flex flex-col snap-start border-2  rounded-lg border-brand-gray-2/30 overflow-hidden min-w-[20rem] max-w-xl md:min-w-[30rem] ${className}`}
@@ -127,7 +144,13 @@ const TasksColumn = ({ className = "", title, tasks, status }: Props) => {
         {title}
       </header>
 
-      <TasksList tasks={tasks} onSelect={handleSelectTask} status={status} />
+      <TasksList
+        tasks={tasks}
+        onSelect={handleSelectTask}
+        status={status}
+        onMoveCard={handleMoveCard}
+      />
+
       <Modal
         title={mode === "delete" ? "Excluir Tarefa" : currTask?.name || ""}
         isOpen={isModalOpen}

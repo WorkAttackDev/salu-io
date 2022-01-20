@@ -48,7 +48,7 @@ const ProjectPage: NextPage = () => {
 
   const { setErrors, setIsOpen } = useErrorStore();
 
-  console.log(pathname);
+  // console.log(pathname);
 
   const { project, setProject } = useProjectStore((state) => ({
     project: state.selectedProject,

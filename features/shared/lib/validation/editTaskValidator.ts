@@ -51,13 +51,11 @@ const editTaskValidator = z.object({
         "string"
       ),
     })
+    .nullable()
     .optional(),
 });
 
-export type EditTaskValidationParams = Omit<
-  z.infer<typeof editTaskValidator>,
-  "id"
->;
+export type EditTaskValidationParams = z.infer<typeof editTaskValidator>;
 
 export const editTaskValidate = (param: Partial<EditTaskValidationParams>) => {
   return editTaskValidator.parse(param);

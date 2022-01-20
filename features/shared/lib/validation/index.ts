@@ -153,6 +153,16 @@ const resetPasswordValidator = z.object({
     })
     .max(250, validationErrorMessages.max("password", 250))
     .min(8, validationErrorMessages.min("password", 8)),
+  verifyPassword: z
+    .string({
+      required_error: validationErrorMessages.required("verifyPassword"),
+      invalid_type_error: validationErrorMessages.invalidType(
+        "verifyPassword",
+        "string"
+      ),
+    })
+    .max(250, validationErrorMessages.max("verifyPassword", 250))
+    .min(8, validationErrorMessages.min("verifyPassword", 8)),
 });
 
 export type ResetPasswordParams = z.infer<typeof resetPasswordValidator>;

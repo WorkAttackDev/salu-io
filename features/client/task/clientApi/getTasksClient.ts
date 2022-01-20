@@ -1,5 +1,6 @@
 import { Project } from "@prisma/client";
 import { AxiosResponse } from "axios";
+import { MyTask } from "../../../shared/models/myTask";
 import { PaginatedApiResponse, SortBy } from "../../../shared/types";
 
 import { AxiosInstance } from "../../core/config/client";
@@ -15,7 +16,7 @@ type GetBroasParams = {
 export const getTasksClient = async (params?: GetBroasParams) => {
   const res = await AxiosInstance.get<
     any,
-    AxiosResponse<PaginatedApiResponse<Project[]>>
+    AxiosResponse<PaginatedApiResponse<MyTask[]>>
   >(
     `/tasks?limit=${params?.limit ?? PAGINATION_LIMIT}${
       params?.page ? "&page=" + params.page : ""

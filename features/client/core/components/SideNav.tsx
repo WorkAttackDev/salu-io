@@ -46,13 +46,14 @@ const SideNav: React.FC = () => {
         {navLinks.map((link) => (
           <Link key={link.url} href={link.url}>
             <a
+              title={link.label}
               className={` ${
                 isExpanded ? "-ml-6" : "justify-center"
               } flex p-4  rounded-xl duration-300 shadow-[0_0_2rem_transparent] hover:ml-0 hover:bg-brand hover:shadow-brand/40 sm:py-4 sm:px-6 ${
                 link.url == pathname ? "ml-0 bg-brand " : ""
               }`}
             >
-              <HomeIcon className='w-6 h-6 ' />
+              {link.Icon && <link.Icon className='w-6 h-6 ' />}
               <p className={`${isExpanded ? "block" : "hidden"} text-xl ml-4`}>
                 {link.label}
               </p>

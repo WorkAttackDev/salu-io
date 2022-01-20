@@ -7,19 +7,26 @@ import useDnD, { DnDItemType } from "../../core/hooks/useDnD";
 import { useProjectStore } from "../../project/stores/useProductsStore";
 import shallow from "zustand/shallow";
 import TaskCard from "./TaskCard";
+import { MyTask } from "../../../shared/models/myTask";
 
 dayjs.extend(relativeTime);
 dayjs.locale("pt-br");
 
 type Props = {
   className?: string;
-  tasks: Task[];
-  onSelect: (task: Task) => void;
+  tasks: MyTask[];
+  onSelect: (task: MyTask) => void;
   status: ProjectStatus;
-  // onDrop: (data: any) => void;
+  onMoveCard: (data: DnDItemType) => void;
 };
 
-const TasksList = ({ tasks, className = "", onSelect, status }: Props) => {
+const TasksList = ({
+  tasks,
+  className = "",
+  onSelect,
+  onMoveCard,
+  status,
+}: Props) => {
   const { selectedProject, setSelectedProject } = useProjectStore(
     (state) => ({
       selectedProject: state.selectedProject,
@@ -37,7 +44,7 @@ const TasksList = ({ tasks, className = "", onSelect, status }: Props) => {
     e.stopPropagation?.();
 
     const newDragId = +e.dataTransfer.getData("text/plain");
-    if (!selectedProject?.tasks) return;
+    if (!selectedProject?.tasks || newDragId === undefined) return;
 
     selectedProject.tasks = selectedProject.tasks.map((task) => {
       if (task.id === newDragId) {
@@ -47,6 +54,10 @@ const TasksList = ({ tasks, className = "", onSelect, status }: Props) => {
     });
 
     setSelectedProject(selectedProject);
+    onMoveCard({
+      id: newDragId,
+      order: status,
+    });
   };
 
   return !tasks.length ? (
@@ -64,7 +75,12 @@ const TasksList = ({ tasks, className = "", onSelect, status }: Props) => {
       className={`grid gap-4 items-start p-4 h-full overflow-y-auto bg-brand-gray-2/50 ${className}`}
     >
       {tasks.map((task) => (
-        <TaskCard key={task.id} onSelect={onSelect} task={task} />
+        <TaskCard
+          key={task.id}
+          onSelect={onSelect}
+          task={task}
+          onMoveCard={onMoveCard}
+        />
       ))}
     </ul>
   );

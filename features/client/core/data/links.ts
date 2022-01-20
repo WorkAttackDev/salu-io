@@ -1,6 +1,8 @@
+import { BriefcaseIcon, HomeIcon } from "@heroicons/react/outline";
+
 export const linksObj = {
-  dashboard: { url: "/", label: "Dashboard" },
-  projects: { url: "/projects", label: "Projetos" },
+  dashboard: { url: "/", label: "Dashboard", Icon: HomeIcon },
+  projects: { url: "/projects", label: "Projetos", Icon: BriefcaseIcon },
   project: {
     url: (id: number) => `/projects/${id}`,
     label: (projName: string) => projName,
@@ -19,8 +21,4 @@ export const linksObj = {
   logout: { url: "/auth/logout", label: "Sair" },
 };
 
-export const navLinks = [
-  linksObj.dashboard,
-  linksObj.projects,
-  linksObj.settings,
-];
+export const navLinks = [linksObj.dashboard, linksObj.projects];

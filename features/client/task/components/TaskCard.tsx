@@ -2,6 +2,7 @@ import { ProjectStatus, Task } from "@prisma/client";
 import dayjs from "dayjs";
 import React from "react";
 import shallow from "zustand/shallow";
+import { MyTask } from "../../../shared/models/myTask";
 import useDnD, { DnDItemType } from "../../core/hooks/useDnD";
 import { useProjectStore } from "../../project/stores/useProductsStore";
 
@@ -9,11 +10,12 @@ import { useProjectStore } from "../../project/stores/useProductsStore";
 
 type Props = {
   className?: string;
-  task: Task;
-  onSelect: (task: Task) => void;
+  task: MyTask;
+  onSelect: (task: MyTask) => void;
+  onMoveCard: (data: DnDItemType) => void;
 };
 
-const TaskCard = ({ task, onSelect }: Props) => {
+const TaskCard = ({ task, onSelect, onMoveCard }: Props) => {
   const { selectedProject, setSelectedProject } = useProjectStore(
     (state) => ({
       selectedProject: state.selectedProject,
@@ -34,7 +36,7 @@ const TaskCard = ({ task, onSelect }: Props) => {
     (tasks) => setTasks(tasks)
   );
 
-  const setTasks = (tasks: Array<Task & { order: string }>) => {
+  const setTasks = (tasks: Array<MyTask & { order: string }>) => {
     if (!selectedProject) return;
 
     selectedProject.tasks = tasks.map((t) => {
@@ -54,7 +56,7 @@ const TaskCard = ({ task, onSelect }: Props) => {
   const handleOnDrop = ([dragged]:
     | [DnDItemType]
     | [DnDItemType, DnDItemType]) => {
-    console.log(dragged);
+    onMoveCard(dragged);
   };
 
   return (

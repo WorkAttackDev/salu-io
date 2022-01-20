@@ -1,5 +1,6 @@
-import { Project, Task } from "@prisma/client";
+import { Project } from "@prisma/client";
+import { MyTask } from "./myTask";
 
 export type MyProjectTasks = Project & {
-  tasks?: Task[];
+  tasks?: MyTask[];
 };
