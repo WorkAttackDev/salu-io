@@ -39,6 +39,13 @@ const MetaInfo: React.FC = () => {
         content='Salu.io - workattack gestor de projetos'
       />
       <meta property='twitter:image' content='/01.jpeg'></meta>
+
+      {/* extra */}
+      <meta name='keywords' content='workattack, management, tool' />
+      <meta name='robots' content='index, nofollow' />
+      <meta http-equiv='Content-Type' content='text/html; charset=utf-8' />
+      <meta name='language' content='Portuguese' />
+      <meta name='author' content='Work Attack' />
     </Head>
   );
 };
