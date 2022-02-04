@@ -45,6 +45,7 @@ const useDnD = <ItemType extends DnDItemType>(
     callback: (data: [DnDItemType] | [DnDItemType, DnDItemType]) => void,
     swap = false
   ) => {
+    e.preventDefault?.();
     e.stopPropagation?.();
     const target = e.currentTarget;
 

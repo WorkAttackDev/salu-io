@@ -42,16 +42,17 @@ function MyApp({ Component, pageProps }: AppProps) {
       setLoading(true);
       timeoutRef = setTimeout(() => {
         setLoading(false);
-      }, 2000);
+      }, 5000);
     }
 
-    (async () => {
-      setLoading(true);
-      const meUser = await meQuery.request(meClient());
-      setLoading(false);
-      if (!meUser) return;
-      setUser(meUser);
-    })();
+    !user &&
+      (async () => {
+        setLoading(true);
+        const meUser = await meQuery.request(meClient());
+        setLoading(false);
+        if (!meUser) return;
+        setUser(meUser);
+      })();
 
     return () => {
       clearTimeout(timeoutRef);

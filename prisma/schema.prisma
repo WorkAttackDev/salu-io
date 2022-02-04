@@ -60,8 +60,9 @@ model User {
   updatedAt     DateTime @updatedAt
   createdAt     DateTime @default(now())
 
-  tokens  Token[]
-  Project Project[]
+  tokens              Token[]
+  Projects            Project[]
+  ProjectParticipants ProjectParticipant[]
   @@map("users")
 }
 
@@ -81,7 +82,21 @@ model Project {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  participants ProjectParticipant[]
   @@map("projects")
+}
+
+model ProjectParticipant {
+  id        Int      @id @default(autoincrement())
+  projectId Int
+  userId    Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  project Project @relation(fields: [projectId], references: [id])
+  user    User    @relation(fields: [userId], references: [id])
+
+  @@map("project_participants")
 }
 
 model Task {

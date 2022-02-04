@@ -1,12 +1,13 @@
 import { AxiosResponse } from "axios";
-import { MyProject } from "../../../shared/models/myProjectTasks";
+import { MyUserInfo } from "../../../shared/models/my_user";
 import { ApiResponse } from "../../../shared/types";
 import { AxiosInstance } from "../../core/config/client";
 
-export const getProjectByIdClient = async (id: string) => {
+export const getUsersClient = async () => {
   const res = await AxiosInstance.get<
     any,
-    AxiosResponse<ApiResponse<MyProject>>
-  >("/projects/" + id);
+    AxiosResponse<ApiResponse<MyUserInfo[]>>
+  >("/auth/users");
+
   return res.data.data;
 };

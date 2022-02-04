@@ -32,7 +32,7 @@ const TaskDetails = ({
           </p>
         )}
       </span>
-      <p className='text-xl text-brand-gray'>{task.description ?? ""}</p>
+      <code className='text-xl text-brand-gray'>{task.description ?? ""}</code>
       <span className='flex items-center space-x-4'>
         <Button size='sm' onClick={onConfirm}>
           Editar

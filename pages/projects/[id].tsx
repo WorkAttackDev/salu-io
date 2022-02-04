@@ -2,22 +2,26 @@ import { ProjectStatus } from "@prisma/client";
 import dayjs from "dayjs";
 import { NextPage } from "next";
 import { useRouter } from "next/router";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import Loading from "../../features/client/core/components/Loading";
 import MainLayout from "../../features/client/core/components/MainLayout";
+import Modal from "../../features/client/core/components/Modal";
+import OptionDropdown from "../../features/client/core/components/OptionDropdown";
 import SectionHeader from "../../features/client/core/components/SectionHeader";
 import useApi from "../../features/client/core/hooks/use_api";
-import { useErrorStore } from "../../features/client/core/stores/errorStore";
-import { handleClientError } from "../../features/client/core/utils/client_errors";
 import { getProjectByIdClient } from "../../features/client/project/clientApi/getProjectByIdClient";
+import AddParticipantsSection from "../../features/client/project/components/AddParticipantsSection";
+import ProjectParticipantsSection from "../../features/client/project/components/ProjectParticipantsSection";
 import { useProjectStore } from "../../features/client/project/stores/useProductsStore";
 import AddTaskFloatButton from "../../features/client/task/components/AddTaskFloatButton";
 import TasksColumn from "../../features/client/task/components/TasksColumn";
-import { MyProjectTasks } from "../../features/shared/models/myProjectTasks";
+import { getUsersClient } from "../../features/client/user/clientApi/getUsersClient";
+import { MyProject } from "../../features/shared/models/myProjectTasks";
+import { MyUserInfo } from "../../features/shared/models/my_user";
 
-type Props = { project: MyProjectTasks };
+type Props = { project: MyProject; owner?: MyUserInfo };
 
-const ProjectDescriptionSection = ({ project }: Props) => {
+const ProjectDescriptionSection = ({ project, owner }: Props) => {
   return (
     <section className='flex flex-col space-y-4 !mt-4'>
       <span className='flex items-baseline space-x-4'>
@@ -29,6 +33,9 @@ const ProjectDescriptionSection = ({ project }: Props) => {
           Termina em {dayjs(project.endDate).format("MMMM DD, YYYY")}
         </p>
       </span>
+      {owner && (
+        <p className='text-lg text-brand-gray-1'>Criado por {owner.name}</p>
+      )}
       <p className='text-xl text-brand-gray'>{project.description}</p>
     </section>
   );
@@ -43,12 +50,34 @@ const columns = [
 ];
 
 const ProjectPage: NextPage = () => {
-  const { query, pathname } = useRouter();
-  const { request, loading } = useApi<typeof getProjectByIdClient>();
+  const { query } = useRouter();
 
-  const { setErrors, setIsOpen } = useErrorStore();
+  const { request, loading } = useApi<
+    typeof getProjectByIdClient | typeof getUsersClient
+  >();
 
-  // console.log(pathname);
+  const [users, setUsers] = useState<MyUserInfo[]>([]);
+
+  const [showAddParticipantModal, setShowAddParticipantModal] = useState<{
+    isOpen: boolean;
+    mode?: "add" | "delete";
+  }>({
+    isOpen: false,
+  });
+
+  const dropdownOptions = [
+    {
+      label: "Add participantes",
+      value: "add-participants",
+      onClick: () => setShowAddParticipantModal({ isOpen: true, mode: "add" }),
+    },
+    {
+      label: "Excluir participantes",
+      value: "delete-participants",
+      onClick: () =>
+        setShowAddParticipantModal({ isOpen: true, mode: "delete" }),
+    },
+  ];
 
   const { project, setProject } = useProjectStore((state) => ({
     project: state.selectedProject,
@@ -63,29 +92,45 @@ const ProjectPage: NextPage = () => {
     (async () => {
       if (isInitial) isInitial = false;
 
-      try {
-        const resData = await request(getProjectByIdClient(id));
+      await localGetProjectById();
 
-        if (!resData) return;
-
-        setProject(resData);
-      } catch (error) {
-        setErrors(handleClientError(error));
-        setIsOpen(true);
-      }
+      const users = await request<typeof getUsersClient>(getUsersClient());
+      if (!users) return;
+      setUsers(users);
     })();
   }, [query]);
+
+  const localGetProjectById = async () => {
+    if (!query.id) return;
+
+    const resData = await request<typeof getProjectByIdClient>(
+      getProjectByIdClient(query.id as string)
+    );
+
+    if (!resData) return;
+
+    setProject(resData);
+  };
 
   return (
     <MainLayout className='flex flex-col space-y-12 overflow-auto'>
       <Loading isLoading={loading || isInitial} />
-      <SectionHeader title={project?.name ?? "Desconhecido"} />
+      <SectionHeader title={project?.name ?? "Desconhecido"}>
+        <OptionDropdown items={dropdownOptions} />
+      </SectionHeader>
 
       {project ? (
         <>
-          <ProjectDescriptionSection project={project} />
+          <ProjectDescriptionSection
+            project={project}
+            owner={users.find((u) => u.id === project.ownerId)}
+          />
+          {!!project.participants?.length && (
+            <ProjectParticipantsSection participants={project.participants} />
+          )}
+
           <section
-            className={`grid grid-flow-col justify-start items-start gap-8 overflow-auto snap-mandatory snap-x  pb-8`}
+            className={`grid grid-flow-col justify-start items-start gap-8 overflow-auto snap-mandatory snap-x pb-8`}
           >
             {columns.map((column) => (
               <TasksColumn
@@ -99,6 +144,22 @@ const ProjectPage: NextPage = () => {
             ))}
           </section>
           <AddTaskFloatButton />
+          <Modal
+            isOpen={showAddParticipantModal.isOpen}
+            title={
+              showAddParticipantModal.mode === "add"
+                ? "Adicionar Participantes"
+                : "Excluir Participantes"
+            }
+          >
+            <AddParticipantsSection
+              mode={showAddParticipantModal.mode}
+              onConclude={localGetProjectById}
+              project={project}
+              usersInfo={users || []}
+              onReject={() => setShowAddParticipantModal({ isOpen: false })}
+            />
+          </Modal>
         </>
       ) : (
         <p>Projeto não encontrado</p>

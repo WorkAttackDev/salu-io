@@ -38,7 +38,7 @@ const TasksColumn = ({ className = "", title, tasks, status }: Props) => {
 
   const deleteTaskMutation = useApi<typeof deleteTaskClient>();
 
-  const { setErrors, setIsOpen } = useErrorStore();
+  const { handleError } = useErrorStore();
 
   const { project, setProject } = useProjectStore(
     (state) => ({
@@ -47,18 +47,6 @@ const TasksColumn = ({ className = "", title, tasks, status }: Props) => {
     }),
     shallow
   );
-
-  useEffect(() => {
-    if (editTaskMutation.error) {
-      setErrors(editTaskMutation.error);
-      setIsOpen(true);
-    }
-
-    if (deleteTaskMutation.error) {
-      setErrors(deleteTaskMutation.error);
-      setIsOpen(true);
-    }
-  }, [editTaskMutation.error]);
 
   const handleSelectTask = useCallback((task: MyTask) => {
     setCurrTask(task);
@@ -96,8 +84,7 @@ const TasksColumn = ({ className = "", title, tasks, status }: Props) => {
       setProject(project);
       setIsModalOpen(false);
     } catch (error) {
-      setErrors(handleClientError(error));
-      setIsOpen(true);
+      handleError(error);
     }
   };
 
@@ -138,7 +125,7 @@ const TasksColumn = ({ className = "", title, tasks, status }: Props) => {
 
   return (
     <article
-      className={`flex flex-col snap-start border-2  rounded-lg border-brand-gray-2/30 overflow-hidden min-w-[20rem] max-w-xl md:min-w-[30rem] ${className}`}
+      className={`flex flex-col snap-x snap-start border-2  rounded-lg border-brand-gray-2/30 overflow-hidden min-w-[20rem] max-w-xl md:min-w-[30rem] ${className}`}
     >
       <header className='bg-transparent p-4 text-2xl font-semibold'>
         {title}

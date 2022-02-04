@@ -31,14 +31,14 @@ const OptionDropdown = ({ className = "", items }: Props) => {
       >
         <Menu.Items
           as='div'
-          className='absolute right-0 bg-brand-gray-1 rounded-lg text-xl text-brand-dark px-2 py-3'
+          className='absolute right-0 bg-brand-gray-1 w-max rounded-lg text-xl text-brand-dark px-2 py-3'
         >
           {items.map((item) => (
             <Menu.Item
               as='button'
               key={item.value}
               onClick={item.onClick}
-              className='flex items-center p-2 font-semibold text-lg rounded-lg cursor-pointer hover:bg-brand-gray'
+              className='flex w-full items-center p-2 font-semibold text-lg rounded-lg cursor-pointer hover:bg-brand-gray'
             >
               {item.label}
             </Menu.Item>

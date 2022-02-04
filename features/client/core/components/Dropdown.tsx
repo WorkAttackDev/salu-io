@@ -8,7 +8,7 @@ type DropdownOptionType = {
 };
 
 type Props = {
-  title: string;
+  title?: string;
   defaultOption?: DropdownOptionType;
   options: DropdownOptionType[];
   onSelectOption?: (value: DropdownOptionType) => void;
@@ -41,7 +41,7 @@ const Dropdown = ({ title, options, defaultOption, onSelectOption }: Props) => {
       >
         <Menu.Items
           as='ul'
-          className='origin-top-right absolute right-0 mt-4  text-xl text-brand-gray-2  bg-white rounded-lg shadow-md'
+          className='origin-top-right absolute overflow-hidden right-0 mt-4  text-xl text-brand-gray-2  bg-white rounded-lg shadow-md'
         >
           {options.map((option) => (
             <Menu.Item

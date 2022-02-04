@@ -19,8 +19,10 @@ export const refreshTokenController = async (
     signed: true,
   });
 
-  if (!refreshToken)
-    return handleServerError(res, 400, ["refresh token inválido"]);
+  if (!refreshToken) {
+    console.error("No refresh token found in request cookies");
+    return handleServerError(res, 400, ["erro de autenticação"]);
+  }
 
   try {
     const rToken = await prisma.token.findUnique({
@@ -28,12 +30,14 @@ export const refreshTokenController = async (
     });
 
     if (!rToken) {
-      handleServerError(res, 400, ["token inválido"]);
+      console.log("refresh token not found");
+      handleServerError(res, 400, ["erro de autenticação"]);
       return;
     }
 
     if (rToken.expiresAt.getTime() <= Date.now()) {
-      handleServerError(res, 400, ["token expirado"]);
+      console.log("refresh token expired");
+      handleServerError(res, 400, ["error de autenticação"]);
       return;
     }
 
@@ -46,6 +50,6 @@ export const refreshTokenController = async (
     res.status(200).json({ data: token, errors: null });
   } catch (error) {
     console.log(error);
-    handleServerError(res, 500, ["ocorreu um erro ao gerar o token"]);
+    handleServerError(res, 500, ["erro de autenticação"]);
   }
 };

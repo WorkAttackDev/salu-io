@@ -1,12 +1,12 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import prisma from "../../../client/core/config/prisma";
 import { handleServerError } from "../../../shared/lib/server_errors";
-import { MyProjectTasks } from "../../../shared/models/myProjectTasks";
+import { MyProject } from "../../../shared/models/myProjectTasks";
 import { ApiResponse } from "../../../shared/types";
 
 export const getProjectByIdController = async (
   req: NextApiRequest,
-  res: NextApiResponse<ApiResponse<MyProjectTasks>>
+  res: NextApiResponse<ApiResponse<MyProject>>
 ) => {
   const id = req.query.id as string;
 
@@ -19,6 +19,13 @@ export const getProjectByIdController = async (
     const project = await prisma.project.findUnique({
       include: {
         tasks: true,
+        participants: {
+          include: {
+            user: {
+              select: { email: true, name: true, id: true },
+            },
+          },
+        },
       },
       where: { id: parseInt(id) },
     });
@@ -28,7 +35,7 @@ export const getProjectByIdController = async (
       return;
     }
 
-    res.status(200).json({ data: project as MyProjectTasks, errors: null });
+    res.status(200).json({ data: project as MyProject, errors: null });
   } catch (error) {
     console.log(error);
     handleServerError(res, 500, ["Erro ao carregar os dados"]);

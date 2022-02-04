@@ -1,18 +1,19 @@
-import { AxiosError } from "axios";
 import { useState } from "react";
-import { handleClientError } from "../utils/client_errors";
+import { useErrorStore } from "../stores/errorStore";
 
-type Awaited<T> = T extends PromiseLike<infer U> ? Awaited<U> : T;
-type ReturnType<T> = T extends (...args: any[]) => infer R ? R : any;
+export type Awaited<T> = T extends PromiseLike<infer U> ? Awaited<U> : T;
+export type ReturnType<T> = T extends (...args: any[]) => infer R ? R : any;
 
 const useApi = <Fn extends Function>() => {
   const [data, setData] = useState<Awaited<ReturnType<Fn>> | null>(null);
   const [error, setError] = useState<string[] | null>(null);
   const [loading, setLoading] = useState(false);
+  const { handleError } = useErrorStore();
 
-  const request = async (
-    promiseFn: ReturnType<Fn>
-  ): Promise<Awaited<ReturnType<Fn>> | null> => {
+  const request = async <Fn2 extends Fn>(
+    promiseFn: ReturnType<Fn>,
+    silent?: boolean
+  ): Promise<Awaited<ReturnType<Fn2>> | null> => {
     setLoading(true);
     try {
       const result = await promiseFn;
@@ -20,7 +21,7 @@ const useApi = <Fn extends Function>() => {
       setData(result);
       return result;
     } catch (err) {
-      setError(handleClientError(err));
+      setError(handleError(err, silent));
       return null;
     } finally {
       setLoading(false);

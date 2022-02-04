@@ -1,6 +1,6 @@
 import { Project } from ".prisma/client";
 import create from "zustand";
-import { MyProjectTasks } from "../../../shared/models/myProjectTasks";
+import { MyProject } from "../../../shared/models/myProjectTasks";
 
 import { PaginationType, SortBy } from "../../../shared/types";
 
@@ -11,12 +11,12 @@ type ProjectFilterType = {
 
 type ProjectStoreType = {
   projects: Project[];
-  selectedProject?: MyProjectTasks;
+  selectedProject?: MyProject;
   pagination: PaginationType;
   filter: ProjectFilterType;
 
   setProjects: (projects: Project[]) => void;
-  setSelectedProject: (project?: MyProjectTasks) => void;
+  setSelectedProject: (project?: MyProject) => void;
   setFilters: (filter: ProjectFilterType) => void;
   addProject: (project: Project) => void;
 };

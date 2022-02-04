@@ -14,7 +14,7 @@
   body {
     @apply flex flex-col h-full w-full bg-brand-dark text-white;
     font-size: 62.5%;
-    font-family: "Comfortaa", cursive;
+    font-family: "Nexa", cursive;
   }
 
   #__next {

@@ -6,8 +6,6 @@ import { MyTask } from "../../../shared/models/myTask";
 import useDnD, { DnDItemType } from "../../core/hooks/useDnD";
 import { useProjectStore } from "../../project/stores/useProductsStore";
 
-// import { Container } from './styles';
-
 type Props = {
   className?: string;
   task: MyTask;
@@ -75,7 +73,7 @@ const TaskCard = ({ task, onSelect, onMoveCard }: Props) => {
       <p className='text-base text-brand-gray-1'>
         {"Termina " + calculateRemainTime(task)}
       </p>
-      <p className='text-lg'>{task.description}</p>
+      <code className='text-lg'>{task.description}</code>
     </li>
   );
 };

@@ -1,8 +1,8 @@
-import { Project, Task } from "@prisma/client";
+import { Task } from "@prisma/client";
 
 export type MyTask = Task & {
-  startDate: string | null;
-  endDate: string | null;
+  startDate: string | Date | null;
+  endDate: string | Date | null;
   createdAt: string;
   updatedAt: string;
 };

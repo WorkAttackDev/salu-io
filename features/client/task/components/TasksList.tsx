@@ -41,6 +41,7 @@ const TasksList = ({
   };
 
   const handleDropTask = (e: DragEvent<HTMLElement>) => {
+    e.preventDefault?.();
     e.stopPropagation?.();
 
     const newDragId = +e.dataTransfer.getData("text/plain");

@@ -13,12 +13,22 @@ export const getProjectsController = async (
     limit,
     name,
     sortBy = "recent",
+    userId,
   } = req.query as {
     page?: string;
     limit?: string;
     name?: string;
     sortBy?: string;
+    userId?: string;
   };
+
+  if (!userId || isNaN(+userId)) {
+    return handleServerError(res, 400, [
+      "Não foi possível encontrar o usuário",
+    ]);
+  }
+
+  const userIdNum = +userId;
 
   const currentPage = Number(page) || 0;
   const perPage = Number(limit) || 20;
@@ -30,24 +40,25 @@ export const getProjectsController = async (
     const projects = await prisma.project.findMany({
       skip: currentPage * perPage,
       take: perPage,
-
       orderBy: { updatedAt: sortByDate },
       where: {
-        name: {
-          contains: name,
-        },
+        OR: [
+          { ownerId: userIdNum },
+          { participants: { some: { userId: userIdNum } } },
+        ],
+        AND: name ? { name: { contains: name } } : undefined,
       },
     });
 
-    const total = !name
-      ? await prisma.project.count()
-      : await prisma.project.count({
-          where: {
-            name: {
-              contains: name,
-            },
-          },
-        });
+    const total = await prisma.project.count({
+      where: {
+        OR: [
+          { ownerId: userIdNum },
+          { participants: { some: { userId: userIdNum } } },
+        ],
+        AND: name ? { name: { contains: name } } : undefined,
+      },
+    });
 
     res.status(200).json({
       data: projects,
