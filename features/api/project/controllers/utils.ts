@@ -1,4 +1,5 @@
 import { NextApiResponse } from "next";
+import prisma from "../../../client/core/config/prisma";
 import { handleServerError } from "../../../shared/lib/server_errors";
 import { tryCatch } from "../../../shared/lib/try_catch";
 
