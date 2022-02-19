@@ -30,7 +30,7 @@ const editProjectValidator = z.object({
       ),
     })
     .max(250, validationErrorMessages.max("description", 1000))
-    .min(1, validationErrorMessages.min("description", 5)),
+    .optional(),
   status: z.nativeEnum(ProjectStatus).optional(),
 
   startDate: z
@@ -50,7 +50,7 @@ const editProjectValidator = z.object({
         "string"
       ),
     })
-    .min(1, validationErrorMessages.min("data de termino", 1)),
+    .optional(),
 });
 
 export type EditProjectValidationParams = Omit<

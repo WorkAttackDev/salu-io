@@ -31,8 +31,8 @@ export const updateProjectController = async (
     const updatedProject = await prisma.project.update({
       where: { id: +id },
       data: {
-        description,
-        endDate: new Date(endDate),
+        description: description || undefined,
+        endDate: endDate ? new Date(endDate) : null,
         name,
         startDate: startDate ? new Date(startDate) : new Date(),
         status,

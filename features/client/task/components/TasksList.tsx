@@ -73,7 +73,7 @@ const TasksList = ({
     </small>
   ) : (
     <ul
-      className={`grid gap-4 items-start p-4 h-full overflow-y-auto bg-brand-gray-2/50 ${className}`}
+      className={`grid gap-4 items-start content-start p-4 max-h-[50vh] overflow-y-auto bg-brand-gray-2/50 ${className}`}
     >
       {tasks.map((task) => (
         <TaskCard

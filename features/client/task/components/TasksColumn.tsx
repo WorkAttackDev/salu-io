@@ -125,7 +125,7 @@ const TasksColumn = ({ className = "", title, tasks, status }: Props) => {
 
   return (
     <article
-      className={`flex flex-col snap-x snap-start border-2  rounded-lg border-brand-gray-2/30 overflow-hidden min-w-[20rem] max-w-xl md:min-w-[30rem] ${className}`}
+      className={`flex flex-col snap-x snap-start border-2  rounded-lg border-brand-gray-2/30 min-w-[20rem] max-w-xl md:min-w-[30rem] ${className}`}
     >
       <header className='bg-transparent p-4 text-2xl font-semibold'>
         {title}

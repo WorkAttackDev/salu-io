@@ -31,7 +31,7 @@ const editTaskValidator = z.object({
       ),
     })
     .max(250, validationErrorMessages.max("description", 1000))
-    .min(1, validationErrorMessages.min("description", 5)),
+    .optional(),
   status: z.nativeEnum(ProjectStatus).optional(),
 
   startDate: z

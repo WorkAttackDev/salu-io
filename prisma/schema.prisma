@@ -69,15 +69,15 @@ model User {
 model Project {
   id          Int           @id @default(autoincrement())
   name        String        @db.VarChar(200)
-  description String?       @db.VarChar(1000)
+  description String?       @default("Sem descrição") @db.VarChar(1000)
   status      ProjectStatus @default(TODO)
   tasks       Task[]
 
   ownerId Int
   owner   User @relation(fields: [ownerId], references: [id])
 
-  startDate DateTime @db.DateTime
-  endDate   DateTime @db.DateTime
+  startDate DateTime? @db.DateTime
+  endDate   DateTime? @db.DateTime
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -102,7 +102,7 @@ model ProjectParticipant {
 model Task {
   id          Int           @id @default(autoincrement())
   name        String        @db.VarChar(200)
-  description String?       @db.VarChar(1000)
+  description String?       @default("Sem descrição") @db.VarChar(1000)
   status      ProjectStatus @default(TODO)
 
   projectId Int

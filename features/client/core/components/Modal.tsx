@@ -53,7 +53,7 @@ const Modal: React.FC<Props> = ({
               leaveFrom='opacity-100 scale-100'
               leaveTo='opacity-0 scale-95'
             >
-              <div className='relative z-10 inline-block w-full max-w-2xl p-8 my-8 overflow-hidden text-left align-middle transition-all transform bg-brand-dark border-2 rounded-lg border-brand-gray-2/30'>
+              <div className='relative z-10 inline-block w-full max-w-3xl p-8 my-8 overflow-hidden text-left align-middle transition-all transform bg-brand-dark border-2 rounded-lg border-brand-gray-2/30'>
                 <Dialog.Title
                   as='h3'
                   className={`text-3xl font-medium leading-10 text-white ${titleClassName}`}

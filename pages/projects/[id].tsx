@@ -113,7 +113,7 @@ const ProjectPage: NextPage = () => {
   };
 
   return (
-    <MainLayout className='flex flex-col space-y-8 overflow-auto'>
+    <MainLayout className='flex flex-col space-y-8 overflow-auto h-max'>
       <Loading isLoading={loading || isInitial} />
       <SectionHeader title={project?.name ?? "Desconhecido"}>
         <OptionDropdown items={dropdownOptions} />
@@ -130,7 +130,7 @@ const ProjectPage: NextPage = () => {
           )}
 
           <section
-            className={`grid grid-flow-col justify-start items-start gap-8 overflow-auto snap-mandatory snap-x pb-8 sm:snap-none`}
+            className={`grid grid-flow-col justify-start items-start gap-8 overflow-x-auto snap-mandatory snap-x pb-8 sm:snap-none`}
           >
             {columns.map((column) => (
               <TasksColumn

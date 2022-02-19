@@ -16,6 +16,7 @@ import OptionDropdown, {
 import { linksObj } from "../../core/data/links";
 import useApi from "../../core/hooks/use_api";
 import { useAuthStore } from "../../core/stores/authStore";
+import { calculateRemainTime } from "../../core/utils";
 import { deleteProjectClient } from "../clientApi/deleteProjectClient";
 import { useProjectStore } from "../stores/useProductsStore";
 
@@ -74,7 +75,7 @@ const ProjectCard = ({ project }: Props) => {
       <p className='text-lg line-clamp-3'>{description}</p>
       <span className='flex items-start text-brand-gray-1 '>
         <CalendarIcon className='w-6 h-6 mr-4' />
-        <p className='text-lg'>{"Termina " + day(day()).to(endDate)}</p>
+        <p className='text-lg'>{calculateRemainTime({ endDate, startDate })}</p>
       </span>
       <Link href={linksObj.project.url(id)}>
         <a>

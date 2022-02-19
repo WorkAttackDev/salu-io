@@ -17,7 +17,7 @@ export const editTaskController = async (
       editTaskValidate(req.body);
 
     const taskData = {
-      description,
+      description: description || undefined,
       endDate: endDate ? new Date(endDate) : null,
       name,
       project: {

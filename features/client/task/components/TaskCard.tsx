@@ -4,6 +4,7 @@ import React from "react";
 import shallow from "zustand/shallow";
 import { MyTask } from "../../../shared/models/myTask";
 import useDnD, { DnDItemType } from "../../core/hooks/useDnD";
+import { calculateRemainTime } from "../../core/utils";
 import { useProjectStore } from "../../project/stores/useProductsStore";
 
 type Props = {
@@ -45,12 +46,6 @@ const TaskCard = ({ task, onSelect, onMoveCard }: Props) => {
     setSelectedProject(selectedProject);
   };
 
-  const calculateRemainTime = (task: Task) => {
-    if (!task.endDate || !task.startDate) return "indefinido";
-
-    return dayjs(dayjs()).to(dayjs(task.endDate));
-  };
-
   const handleOnDrop = ([dragged]:
     | [DnDItemType]
     | [DnDItemType, DnDItemType]) => {
@@ -71,9 +66,12 @@ const TaskCard = ({ task, onSelect, onMoveCard }: Props) => {
     >
       <h6 className='text-xl'>{task.name}</h6>
       <p className='text-base text-brand-gray-1'>
-        {"Termina " + calculateRemainTime(task)}
+        {calculateRemainTime({
+          endDate: task.endDate,
+          startDate: task.endDate,
+        })}
       </p>
-      <code className='text-lg'>{task.description}</code>
+      <pre className='text-lg'>{task.description}</pre>
     </li>
   );
 };

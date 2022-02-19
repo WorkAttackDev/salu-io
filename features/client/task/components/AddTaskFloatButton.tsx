@@ -45,6 +45,8 @@ const AddTaskFloatButton = () => {
       projectId: project.id,
     };
 
+    console.log(adjustedData);
+
     const ValidatedData = editTaskValidate(adjustedData);
     const newTask = await request(editTaskClient(ValidatedData));
     if (!newTask) return;

@@ -1,3 +1,5 @@
+import dayjs from "dayjs";
+
 interface SortByDateArgs {
   createdAt: Date | string;
   updatedAt: Date | string;
@@ -20,4 +22,24 @@ export const sortByDate = <ListModel extends SortByDateArgs>(
       ? 1
       : 0;
   });
+};
+
+export const calculateRemainTime = (timing: {
+  startDate?: string | Date | null;
+  endDate?: string | Date | null;
+}) => {
+  if (!timing.endDate || !timing.startDate) return "indefinido";
+  type Unit = "month" | "days" | "hours" | "minutes";
+  const finishIn = (unit: Unit) =>
+    dayjs(dayjs(timing.endDate)).diff(dayjs(), unit);
+
+  return finishIn("month") > 0
+    ? `Termina em ${finishIn("month") + 1} meses`
+    : finishIn("days") > 0
+    ? `Termina em ${finishIn("days")} dias`
+    : finishIn("hours") > 0
+    ? `Termina em ${finishIn("hours")} horas`
+    : finishIn("minutes") > 0
+    ? `Termina em ${finishIn("minutes")} minutos`
+    : "Já terminou";
 };

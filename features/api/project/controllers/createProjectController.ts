@@ -19,8 +19,8 @@ export const createProjectController = async (
     try {
       const newProject = await prisma.project.create({
         data: {
-          description,
-          endDate: new Date(endDate),
+          description: description || undefined,
+          endDate: endDate ? new Date(endDate) : null,
           name,
           owner: {
             connect: {
