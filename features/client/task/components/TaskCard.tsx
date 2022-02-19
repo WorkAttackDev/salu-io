@@ -71,7 +71,7 @@ const TaskCard = ({ task, onSelect, onMoveCard }: Props) => {
           startDate: task.endDate,
         })}
       </p>
-      <pre className='text-lg'>{task.description}</pre>
+      <p className='text-lg'>{task.description}</p>
     </li>
   );
 };
