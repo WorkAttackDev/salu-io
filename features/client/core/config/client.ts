@@ -3,6 +3,7 @@ import { ApiResponse } from "../../../shared/types";
 import { HOST } from "../../../shared/utils";
 import { AuthRefreshTokenEndpoint } from "../../user/client";
 import { globalSetToken, useAuthStore } from "../stores/authStore";
+import { useLoadingStore } from "../stores/loadingStore";
 
 export const AxiosInstance = axios.create({
   baseURL: HOST + "api/",
@@ -28,6 +29,7 @@ AxiosInstance.interceptors.response.use(
 
     if (err.response.status === 401 && !errConfig._retry) {
       errConfig._retry = true;
+      useLoadingStore.setState({ loading: true });
 
       try {
         const res = await AxiosInstance.get<
