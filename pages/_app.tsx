@@ -63,7 +63,7 @@ function MyApp({ Component, pageProps }: AppProps) {
   }, []);
 
   return (
-    <div className='flex h-full'>
+    <div className='flex h-full overflow-auto'>
       <MetaInfo />
 
       {!isAuthRoute && <SideNav />}
