@@ -38,11 +38,12 @@ AxiosInstance.interceptors.response.use(
         >(AuthRefreshTokenEndpoint);
 
         globalSetToken(res.data.data);
-        useLoadingStore.setState({ loading: false });
 
         return AxiosInstance(errConfig);
       } catch (error) {
         return Promise.reject(error);
+      } finally {
+        useLoadingStore.setState({ loading: false });
       }
     }
     return Promise.reject(err);
