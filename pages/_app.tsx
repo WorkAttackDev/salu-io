@@ -25,6 +25,7 @@ function MyApp({ Component, pageProps }: AppProps) {
   const router = useRouter();
   const { errors, isOpen, setIsOpen } = useErrorStore();
   const { loading, setLoading } = useLoadingStore();
+  setLoading(true);
 
   const isAuthRoute = router.pathname.includes("/auth");
 
