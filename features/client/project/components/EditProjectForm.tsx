@@ -1,13 +1,13 @@
 import { Project, ProjectStatus } from "@prisma/client";
-import dayjs from "dayjs";
-import Link from "next/link";
 import { useRouter } from "next/router";
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { EditProjectValidationParams } from "../../../shared/lib/validation/editProjectValidator";
 import Button from "../../core/components/Button";
 import InputField from "../../core/components/InputField";
 import SelectField from "../../core/components/SelectField";
 import TextAreaField from "../../core/components/TextAreaField";
+import { convertToValidDateTime } from "../../core/utils";
 
 const statusOptions = [
   { label: "Em carteira", value: ProjectStatus.TODO },
@@ -29,13 +29,11 @@ const EditProjectForm = ({
   mode = "create",
 }: Props) => {
   const { register, handleSubmit, watch } =
-    useForm<EditProjectValidationParams>({});
+    useForm<EditProjectValidationParams>();
 
   const { back } = useRouter();
 
   const startDateValue = watch("startDate");
-
-  console.log(startDateValue);
 
   return (
     <form className='flex flex-col space-y-8' onSubmit={handleSubmit(onSubmit)}>
@@ -70,11 +68,9 @@ const EditProjectForm = ({
       />
       <div className='grid grid-flow-row gap-8 sm:grid-flow-col'>
         <InputField
-          min='2022-01-01T00:00'
+          min='2022-01-01T00:00:00'
           defaultValue={
-            project
-              ? dayjs(project.startDate).toISOString().replaceAll(".000Z", "")
-              : ""
+            project?.startDate ? convertToValidDateTime(project.startDate) : ""
           }
           labelText='Data Início'
           type='datetime-local'
@@ -84,9 +80,7 @@ const EditProjectForm = ({
         <InputField
           min={startDateValue || "2022-01-01T00:00"}
           defaultValue={
-            project
-              ? dayjs(project.endDate).toISOString().replaceAll(".000Z", "")
-              : ""
+            project?.endDate ? convertToValidDateTime(project.endDate) : ""
           }
           labelText='Data Termino'
           type='datetime-local'

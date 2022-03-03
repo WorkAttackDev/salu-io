@@ -1,12 +1,12 @@
 import { ProjectStatus, Task } from "@prisma/client";
-import dayjs from "dayjs";
-import React from "react";
+import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { EditTaskValidationParams } from "../../../shared/lib/validation/editTaskValidator";
 import Button from "../../core/components/Button";
 import InputField from "../../core/components/InputField";
 import SelectField from "../../core/components/SelectField";
 import TextAreaField from "../../core/components/TextAreaField";
+import { convertToValidDateTime } from "../../core/utils";
 
 const statusOptions = [
   { label: "Em carteira", value: ProjectStatus.TODO },
@@ -29,9 +29,7 @@ const EditTaskForm = ({
   task,
   mode = "create",
 }: Props) => {
-  const { register, handleSubmit, watch } = useForm<EditTaskValidationParams>();
-
-  // const startDateValue = watch("startDate");
+  const { register, handleSubmit } = useForm<EditTaskValidationParams>();
 
   return (
     <form className='flex flex-col space-y-8' onSubmit={handleSubmit(onSubmit)}>
@@ -70,9 +68,7 @@ const EditTaskForm = ({
           type='datetime-local'
           {...register("startDate")}
           defaultValue={
-            task?.startDate
-              ? dayjs(task.startDate).toISOString().replaceAll(".000Z", "")
-              : ""
+            task?.startDate ? convertToValidDateTime(task.startDate) : ""
           }
         />
         <InputField
@@ -80,9 +76,7 @@ const EditTaskForm = ({
           type='datetime-local'
           {...register("endDate")}
           defaultValue={
-            task?.endDate
-              ? dayjs(task.endDate).toISOString().replaceAll(".000Z", "")
-              : ""
+            task?.endDate ? convertToValidDateTime(task.endDate) : ""
           }
         />
       </div>

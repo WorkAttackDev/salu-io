@@ -43,3 +43,9 @@ export const calculateRemainTime = (timing: {
     ? `Termina em ${finishIn("minutes")} minutos`
     : "Já terminou";
 };
+
+export const convertToValidDateTime = (date: string | Date) => {
+  return dayjs(date)
+    .toISOString()
+    .replace(/:\d\d.000Z$/i, "");
+};

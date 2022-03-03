@@ -1,5 +1,6 @@
 import { ProjectStatus } from "@prisma/client";
 import dayjs from "dayjs";
+import { link } from "fs";
 import { NextPage } from "next";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
@@ -8,6 +9,7 @@ import MainLayout from "../../features/client/core/components/MainLayout";
 import Modal from "../../features/client/core/components/Modal";
 import OptionDropdown from "../../features/client/core/components/OptionDropdown";
 import SectionHeader from "../../features/client/core/components/SectionHeader";
+import { linksObj } from "../../features/client/core/data/links";
 import useApi from "../../features/client/core/hooks/use_api";
 import { getProjectByIdClient } from "../../features/client/project/clientApi/getProjectByIdClient";
 import AddParticipantsSection from "../../features/client/project/components/AddParticipantsSection";
@@ -50,7 +52,7 @@ const columns = [
 ];
 
 const ProjectPage: NextPage = () => {
-  const { query } = useRouter();
+  const { query, push } = useRouter();
 
   const { request, loading } = useApi<
     typeof getProjectByIdClient | typeof getUsersClient
@@ -66,6 +68,12 @@ const ProjectPage: NextPage = () => {
   });
 
   const dropdownOptions = [
+    // {
+    //   label: "Editar Projeto",
+    //   value: "edit-project",
+    //   onclick: () =>
+    //     project && push(`${linksObj.editProject.url}/${project.id}`),
+    // },
     {
       label: "Add participantes",
       value: "add-participants",

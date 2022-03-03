@@ -1,5 +1,4 @@
 import type { AppProps } from "next/app";
-import Head from "next/head";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import Script from "next/script";
@@ -18,6 +17,7 @@ import { useErrorStore } from "../features/client/core/stores/errorStore";
 import { useLoadingStore } from "../features/client/core/stores/loadingStore";
 import { meClient } from "../features/client/user/client";
 import "../styles/globals.css";
+
 function MyApp({ Component, pageProps }: AppProps) {
   const meQuery = useApi<typeof meClient>();
   const { user, setUser } = useAuthStore();
@@ -25,6 +25,7 @@ function MyApp({ Component, pageProps }: AppProps) {
   const router = useRouter();
   const { errors, isOpen, setIsOpen } = useErrorStore();
   const { loading, setLoading } = useLoadingStore();
+  const [initLoading, setInitLoading] = useState(false);
 
   const isAuthRoute = router.pathname.includes("/auth");
 
@@ -37,13 +38,12 @@ function MyApp({ Component, pageProps }: AppProps) {
     router.events.on("routeChangeError", handleRouteChangeOff);
 
     let timeoutRef: NodeJS.Timeout;
-    setLoading(true);
 
     if (!user) {
-      setLoading(true);
+      setInitLoading(true);
       timeoutRef = setTimeout(() => {
-        setLoading(false);
-      }, 5000);
+        setInitLoading(false);
+      }, 3000);
     }
 
     !user &&
@@ -84,7 +84,7 @@ function MyApp({ Component, pageProps }: AppProps) {
         </MainLayout>
       )}
       <Popup isOpen={isOpen} texts={errors} onClose={() => setIsOpen(false)} />
-      <Loading isLoading={loading} />
+      <Loading isLoading={loading || initLoading} />
       <Script
         src='https://accounts.google.com/gsi/client'
         strategy='beforeInteractive'

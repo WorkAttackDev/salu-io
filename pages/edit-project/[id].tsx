@@ -73,11 +73,13 @@ const EditProjectByIdPage: NextPage = () => {
   return (
     <MainLayout className='w-full max-w-6xl mx-auto'>
       <SectionHeader title='Editar Projeto' className='mb-12' />
-      <EditProjectForm
-        onSubmit={onSubmitHandler}
-        project={project}
-        mode='edit'
-      />
+      {project && (
+        <EditProjectForm
+          onSubmit={onSubmitHandler}
+          project={project}
+          mode='edit'
+        />
+      )}
       <Loading isLoading={getProjectByIdQuery.loading || loading} />
     </MainLayout>
   );
