@@ -1,5 +1,5 @@
 import { EditUserValidationParams } from "../../../shared/lib/validation/edit_user_validator";
-import { MyUser } from "../../../shared/models/my_user";
+import { MyUser } from "../../../shared/models/myUser";
 import Button from "../../core/components/Button";
 import InputField from "../../core/components/InputField";
 

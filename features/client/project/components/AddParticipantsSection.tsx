@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { MyProject } from "../../../shared/models/myProjectTasks";
-import { MyUserInfo } from "../../../shared/models/my_user";
+import { MyUserInfo } from "../../../shared/models/myUser";
 import Button from "../../core/components/Button";
 import CheckBoxField from "../../core/components/CheckBoxField";
 import useApi from "../../core/hooks/use_api";

@@ -21,6 +21,13 @@
   #__next {
     @apply h-full w-full;
   }
+
+  .color-picker::-webkit-color-swatch {
+    @apply rounded-full border-none flex-shrink-0;
+  }
+  .color-picker::-moz-color-swatch {
+    @apply rounded-full border-none flex-shrink-0;
+  }
 }
 
 #headlessui-portal-root {

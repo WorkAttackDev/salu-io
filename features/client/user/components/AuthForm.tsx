@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { LoginValidationParams } from "../../../shared/lib/validation";
 import Button from "../../core/components/Button";
 import InputField from "../../core/components/InputField";
 import { linksObj } from "../../core/data/links";

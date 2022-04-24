@@ -83,6 +83,8 @@ model Project {
   updatedAt DateTime @updatedAt
 
   participants ProjectParticipant[]
+  labels       Label[]
+
   @@map("projects")
 }
 
@@ -114,5 +116,21 @@ model Task {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  labels Label[]
+
   @@map("tasks")
+}
+
+model Label {
+  id    String @id @default(uuid())
+  name  String @unique @db.VarChar(25)
+  color String @default("#ff811c") @db.VarChar(7)
+
+  projects Project[]
+  tasks    Task[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("labels")
 }

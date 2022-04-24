@@ -5,7 +5,7 @@ import {
   handleServerValidationError,
 } from "../../../shared/lib/server_errors";
 import { loginValidation } from "../../../shared/lib/validation";
-import { MyUser } from "../../../shared/models/my_user";
+import { MyUser } from "../../../shared/models/myUser";
 import { ApiResponse } from "../../../shared/types";
 import { compareHash } from "../util/hash";
 import { issueJWToken } from "../util/jwt";

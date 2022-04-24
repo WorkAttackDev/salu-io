@@ -18,7 +18,9 @@ export const getProjectByIdController = async (
   try {
     const project = await prisma.project.findUnique({
       include: {
-        tasks: true,
+        tasks: {
+          include: { labels: true },
+        },
         participants: {
           include: {
             user: {

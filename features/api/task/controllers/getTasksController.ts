@@ -30,7 +30,7 @@ export const getTasksController = async (
     const projects = await prisma.task.findMany({
       skip: currentPage * perPage,
       take: perPage,
-
+      include: { labels: true },
       orderBy: { updatedAt: sortByDate },
       where: {
         name: {

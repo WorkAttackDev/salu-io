@@ -1,6 +1,5 @@
-import { ProjectStatus } from "@prisma/client";
+import { Label, ProjectStatus } from "@prisma/client";
 import dayjs from "dayjs";
-import { link } from "fs";
 import { NextPage } from "next";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
@@ -9,23 +8,29 @@ import MainLayout from "../../features/client/core/components/MainLayout";
 import Modal from "../../features/client/core/components/Modal";
 import OptionDropdown from "../../features/client/core/components/OptionDropdown";
 import SectionHeader from "../../features/client/core/components/SectionHeader";
-import { linksObj } from "../../features/client/core/data/links";
 import useApi from "../../features/client/core/hooks/use_api";
+import LabelList from "../../features/client/label/components/LabelList";
 import { getProjectByIdClient } from "../../features/client/project/clientApi/getProjectByIdClient";
 import AddParticipantsSection from "../../features/client/project/components/AddParticipantsSection";
 import ProjectParticipantsSection from "../../features/client/project/components/ProjectParticipantsSection";
+import useProject from "../../features/client/project/hooks/useProject";
 import { useProjectStore } from "../../features/client/project/stores/useProductsStore";
 import AddTaskFloatButton from "../../features/client/task/components/AddTaskFloatButton";
 import TasksColumn from "../../features/client/task/components/TasksColumn";
 import { getUsersClient } from "../../features/client/user/clientApi/getUsersClient";
+import useUser from "../../features/client/user/hooks/useUser";
 import { MyProject } from "../../features/shared/models/myProjectTasks";
-import { MyUserInfo } from "../../features/shared/models/my_user";
+import { MyTask } from "../../features/shared/models/myTask";
+import { MyUserInfo } from "../../features/shared/models/myUser";
 
 type Props = { project: MyProject; owner?: MyUserInfo };
 
 const ProjectDescriptionSection = ({ project, owner }: Props) => {
   return (
-    <section className='flex flex-col space-y-4 !mt-4'>
+    <section className='flex flex-col space-y-2 !mt-4'>
+      {owner && (
+        <p className='text-lg text-brand-gray-1'>Criado por {owner.name}</p>
+      )}
       <span className='flex items-baseline space-x-4'>
         <p className='text-lg text-brand-gray-1'>
           Começou em {dayjs(project.startDate).format("MMMM DD, YYYY")}
@@ -35,9 +40,7 @@ const ProjectDescriptionSection = ({ project, owner }: Props) => {
           Termina em {dayjs(project.endDate).format("MMMM DD, YYYY")}
         </p>
       </span>
-      {owner && (
-        <p className='text-lg text-brand-gray-1'>Criado por {owner.name}</p>
-      )}
+
       <p className='text-xl text-brand-gray'>{project.description}</p>
     </section>
   );
@@ -54,11 +57,12 @@ const columns = [
 const ProjectPage: NextPage = () => {
   const { query, push } = useRouter();
 
-  const { request, loading } = useApi<
-    typeof getProjectByIdClient | typeof getUsersClient
-  >();
+  const { users, loading } = useUser();
 
-  const [users, setUsers] = useState<MyUserInfo[]>([]);
+  const [filterLabel, setFilterLabel] = useState<Label | undefined>(undefined);
+  const [filteredTasks, setFilteredTasks] = useState<MyTask[] | undefined>();
+
+  const { localGetProjectById, loading: projectLoading } = useProject();
 
   const [showAddParticipantModal, setShowAddParticipantModal] = useState<{
     isOpen: boolean;
@@ -87,9 +91,8 @@ const ProjectPage: NextPage = () => {
     },
   ];
 
-  const { project, setProject } = useProjectStore((state) => ({
+  const { project } = useProjectStore((state) => ({
     project: state.selectedProject,
-    setProject: state.setSelectedProject,
   }));
 
   useEffect(() => {
@@ -100,29 +103,25 @@ const ProjectPage: NextPage = () => {
     (async () => {
       if (isInitial) isInitial = false;
 
-      await localGetProjectById();
-
-      const users = await request<typeof getUsersClient>(getUsersClient());
-      if (!users) return;
-      setUsers(users);
+      await localGetProjectById(id);
     })();
   }, [query]);
 
-  const localGetProjectById = async () => {
-    if (!query.id) return;
+  useEffect(() => {
+    if (!filterLabel) {
+      return setFilteredTasks(undefined);
+    }
 
-    const resData = await request<typeof getProjectByIdClient>(
-      getProjectByIdClient(query.id as string)
+    setFilteredTasks(
+      project?.tasks?.filter((task) =>
+        task.labels?.some((label) => label.id === filterLabel.id)
+      )
     );
-
-    if (!resData) return;
-
-    setProject(resData);
-  };
+  }, [filterLabel]);
 
   return (
     <MainLayout className='flex flex-col space-y-8 overflow-auto h-max'>
-      <Loading isLoading={loading || isInitial} />
+      <Loading isLoading={loading || projectLoading || isInitial} />
       <SectionHeader title={project?.name ?? "Desconhecido"}>
         <OptionDropdown items={dropdownOptions} />
       </SectionHeader>
@@ -136,7 +135,7 @@ const ProjectPage: NextPage = () => {
           {!!project.participants?.length && (
             <ProjectParticipantsSection participants={project.participants} />
           )}
-
+          <LabelList load onClick={setFilterLabel} currLabel={filterLabel} />
           <section
             className={`grid grid-flow-col justify-start items-start gap-8 overflow-x-auto snap-mandatory snap-x pb-8 sm:snap-none`}
           >
@@ -146,7 +145,9 @@ const ProjectPage: NextPage = () => {
                 title={column.label}
                 status={column.status}
                 tasks={
-                  project.tasks?.filter((v) => v.status === column.status) || []
+                  (filteredTasks || project.tasks)?.filter(
+                    (v) => v.status === column.status
+                  ) || []
                 }
               />
             ))}
@@ -162,7 +163,7 @@ const ProjectPage: NextPage = () => {
           >
             <AddParticipantsSection
               mode={showAddParticipantModal.mode}
-              onConclude={localGetProjectById}
+              onConclude={() => localGetProjectById(query.id as string)}
               project={project}
               usersInfo={users || []}
               onReject={() => setShowAddParticipantModal({ isOpen: false })}

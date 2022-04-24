@@ -6,7 +6,7 @@ import {
 } from "../../../shared/lib/server_errors";
 import { tryCatch } from "../../../shared/lib/try_catch";
 import { editUserValidate } from "../../../shared/lib/validation/edit_user_validator";
-import { MyUser } from "../../../shared/models/my_user";
+import { MyUser } from "../../../shared/models/myUser";
 import { ApiResponse } from "../../../shared/types";
 import { sanitizedUser, slugify } from "./util";
 

@@ -1,5 +1,5 @@
 import { AxiosResponse } from "axios";
-import { MyUserInfo } from "../../../shared/models/my_user";
+import { MyUserInfo } from "../../../shared/models/myUser";
 import { ApiResponse } from "../../../shared/types";
 import { AxiosInstance } from "../../core/config/client";
 

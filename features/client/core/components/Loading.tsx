@@ -21,7 +21,7 @@ const Loading = ({ isLoading, className = "", ...props }: Props) => (
       {...props}
       className={`fixed !m-0 z-50 inset-0 w-full h-full flex flex-col justify-center items-center bg-brand-dark ${className}`}
     >
-      <div className='animate-spin rounded-full h-32 w-32 border-b-2 border-brand'></div>
+      <div className='animate-spin flex-shrink-0 p-4 rounded-full h-32 w-32 border-b-2 border-brand'></div>
       <p className='mt-8 text-xl text-brand'>Carregando...</p>
     </div>
   </Transition>

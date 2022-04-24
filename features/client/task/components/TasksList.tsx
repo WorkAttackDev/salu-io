@@ -1,13 +1,13 @@
-import { ProjectStatus, Task } from "@prisma/client";
+import { ProjectStatus } from "@prisma/client";
 import dayjs from "dayjs";
-import React, { DragEvent } from "react";
-import relativeTime from "dayjs/plugin/relativeTime";
 import "dayjs/locale/pt-br";
-import useDnD, { DnDItemType } from "../../core/hooks/useDnD";
-import { useProjectStore } from "../../project/stores/useProductsStore";
+import relativeTime from "dayjs/plugin/relativeTime";
+import React, { DragEvent, MouseEvent } from "react";
 import shallow from "zustand/shallow";
-import TaskCard from "./TaskCard";
 import { MyTask } from "../../../shared/models/myTask";
+import { DnDItemType } from "../../core/hooks/useDnD";
+import { useProjectStore } from "../../project/stores/useProductsStore";
+import TaskCard from "./TaskCard";
 
 dayjs.extend(relativeTime);
 dayjs.locale("pt-br");

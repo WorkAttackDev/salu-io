@@ -1,8 +1,10 @@
-import { BriefcaseIcon, HomeIcon } from "@heroicons/react/outline";
+import { BriefcaseIcon, HomeIcon, UserIcon } from "@heroicons/react/outline";
+import { isProduction } from "../../../shared/utils";
 
 export const linksObj = {
   dashboard: { url: "/", label: "Dashboard", Icon: HomeIcon },
   projects: { url: "/projects", label: "Projetos", Icon: BriefcaseIcon },
+  users: { url: "/users", label: "Usuários", Icon: UserIcon },
   project: {
     url: (id: number) => `/projects/${id}`,
     label: (projName: string) => projName,
@@ -21,4 +23,6 @@ export const linksObj = {
   logout: { url: "/auth/logout", label: "Sair" },
 };
 
-export const navLinks = [linksObj.dashboard, linksObj.projects];
+export const navLinks = isProduction
+  ? [linksObj.dashboard, linksObj.projects]
+  : [linksObj.dashboard, linksObj.projects, linksObj.users];

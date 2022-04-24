@@ -1,4 +1,4 @@
-import { MyUser } from "../../../shared/models/my_user";
+import { MyUser } from "../../../shared/models/myUser";
 
 export const getMe = async (): Promise<MyUser> => {
   const res = await fetch("/api/auth/me", {

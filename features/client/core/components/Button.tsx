@@ -27,16 +27,15 @@ const Button: React.FC<Props> = ({
 
   const buttonThemeClass =
     theme === "primary"
-      ? "bg-brand/70 text-white shadow-[0_0_2rem_transparent] hover:bg-brand hover:shadow-brand/40"
+      ? "bg-brand/70 border border-brand/60 text-white shadow-[0_0_2rem_transparent] hover:bg-brand hover:border-brand hover:shadow-brand/40"
       : theme === "secondary"
       ? "bg-transparent border-2 border-brand-gray/20 hover:bg-brand-gray-2 hover:text-white"
       : "bg-transparent border-2 border-red-600/30 hover:bg-red-600/50 hover:text-white";
 
   const iconLoadingClass = isLoading ? "animate-bounce" : "";
 
-  const buttonDisabledClass = disabled
-    ? "!bg-brand-gray !text-brand-gray-1 opacity-50 cursor-not-allowed !hover:bg-brand-gray"
-    : "";
+  const buttonDisabledClass =
+    "disabled:!bg-brand-gray disabled:!text-brand-gray-2 disabled:opacity-50 disabled:!border-brand-gray disabled:cursor-not-allowed disabled:shadow-none disabled:!hover:bg-brand-gray";
 
   return (
     <button

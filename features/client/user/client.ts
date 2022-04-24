@@ -6,7 +6,7 @@ import {
   ResetPasswordParams,
 } from "../../shared/lib/validation";
 import { EditUserValidationParams } from "../../shared/lib/validation/edit_user_validator";
-import { MyUser } from "../../shared/models/my_user";
+import { MyUser } from "../../shared/models/myUser";
 import { ApiResponse } from "../../shared/types";
 import { AxiosInstance } from "../core/config/client";
 

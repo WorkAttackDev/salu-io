@@ -3,6 +3,7 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import Script from "next/script";
 import React, { useEffect, useState } from "react";
+import shallow from "zustand/shallow";
 import Button from "../features/client/core/components/Button";
 import Loading from "../features/client/core/components/Loading";
 import MainLayout from "../features/client/core/components/MainLayout";
@@ -15,6 +16,8 @@ import useApi from "../features/client/core/hooks/use_api";
 import { useAuthStore } from "../features/client/core/stores/authStore";
 import { useErrorStore } from "../features/client/core/stores/errorStore";
 import { useLoadingStore } from "../features/client/core/stores/loadingStore";
+import PomodoroFloatBox from "../features/client/pomodoro/components/PomodoroFloatBox";
+import { usePomodoroStore } from "../features/client/pomodoro/stores/usePomodoroStore";
 import { meClient } from "../features/client/user/client";
 import "../styles/globals.css";
 
@@ -25,8 +28,8 @@ function MyApp({ Component, pageProps }: AppProps) {
   const router = useRouter();
   const { errors, isOpen, setIsOpen } = useErrorStore();
   const { loading, setLoading } = useLoadingStore();
+  const showPomodoro = usePomodoroStore((s) => s.showPomodoro, shallow);
   const [initLoading, setInitLoading] = useState(false);
-
   const isAuthRoute = router.pathname.includes("/auth");
 
   useEffect(() => {
@@ -83,6 +86,7 @@ function MyApp({ Component, pageProps }: AppProps) {
           </Link>
         </MainLayout>
       )}
+      {showPomodoro && <PomodoroFloatBox />}
       <Popup isOpen={isOpen} texts={errors} onClose={() => setIsOpen(false)} />
       <Loading isLoading={loading || initLoading} />
       <Script

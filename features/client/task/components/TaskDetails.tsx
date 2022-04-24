@@ -1,14 +1,17 @@
-import { Task } from "@prisma/client";
+import { BookmarkIcon } from "@heroicons/react/outline";
 import dayjs from "dayjs";
 import React from "react";
+import { MyTask } from "../../../shared/models/myTask";
 import Button from "../../core/components/Button";
+import LabelList from "../../label/components/LabelList";
 
 type Props = {
   className?: string;
-  task: Task;
+  task: MyTask;
   onClose: () => void;
   onDelete: () => void;
   onConfirm: () => void;
+  onLabel: () => void;
 };
 
 const TaskDetails = ({
@@ -17,6 +20,7 @@ const TaskDetails = ({
   onClose,
   onConfirm,
   onDelete,
+  onLabel,
 }: Props) => {
   return (
     <div className={`flex flex-col space-y-8 ${className}`}>
@@ -35,6 +39,7 @@ const TaskDetails = ({
       <pre className='text-xl text-brand-gray whitespace-pre-line'>
         {task.description ?? ""}
       </pre>
+      {task.labels && <LabelList labels={task.labels} />}
       <span className='flex items-center space-x-4'>
         <Button size='sm' onClick={onConfirm}>
           Editar
@@ -45,6 +50,13 @@ const TaskDetails = ({
         <Button theme='danger' size='sm' onClick={onDelete}>
           Excluir
         </Button>
+        <button
+          className='!ml-auto hover:text-brand'
+          onClick={onLabel}
+          title='labels'
+        >
+          <BookmarkIcon className='w-8 h-8 ' />
+        </button>
       </span>
     </div>
   );

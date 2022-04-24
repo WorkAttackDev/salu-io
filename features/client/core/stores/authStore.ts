@@ -1,5 +1,5 @@
 import create from "zustand";
-import { MyUser } from "../../../shared/models/my_user";
+import { MyUser } from "../../../shared/models/myUser";
 
 type AuthStoreType = {
   token: string;

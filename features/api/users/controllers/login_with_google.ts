@@ -5,7 +5,7 @@ import {
   handleServerValidationError,
 } from "../../../shared/lib/server_errors";
 import { loginWithGoogleValidation } from "../../../shared/lib/validation";
-import { MyUser } from "../../../shared/models/my_user";
+import { MyUser } from "../../../shared/models/myUser";
 import { hash } from "../util/hash";
 import { issueJWToken } from "../util/jwt";
 import { sanitizedUser, slugify } from "./util";

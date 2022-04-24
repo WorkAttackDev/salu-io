@@ -2,7 +2,7 @@ import { NextApiRequest, NextApiResponse } from "next";
 import prisma from "../../../client/core/config/prisma";
 import { handleServerError } from "../../../shared/lib/server_errors";
 import { tryCatch } from "../../../shared/lib/try_catch";
-import { MyUserInfo } from "../../../shared/models/my_user";
+import { MyUserInfo } from "../../../shared/models/myUser";
 import { ApiResponse } from "../../../shared/types";
 
 export const getUsersController = async (
@@ -10,7 +10,9 @@ export const getUsersController = async (
   res: NextApiResponse<ApiResponse<MyUserInfo[]>>
 ) => {
   const [users, error] = await tryCatch(
-    prisma.user.findMany({ select: { id: true, name: true, email: true } })
+    prisma.user.findMany({
+      select: { id: true, name: true, email: true, role: true },
+    })
   );
 
   if (error || !users) {

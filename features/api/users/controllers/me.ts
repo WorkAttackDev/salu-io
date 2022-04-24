@@ -5,7 +5,7 @@ import {
   handleServerError,
   handleServerValidationError,
 } from "../../../shared/lib/server_errors";
-import { MyUser } from "../../../shared/models/my_user";
+import { MyUser } from "../../../shared/models/myUser";
 import { ApiResponse } from "../../../shared/types";
 import { AuthMiddleware } from "../../core/middlewares/auth";
 import { sanitizedUser } from "./util";
