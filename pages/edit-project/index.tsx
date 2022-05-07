@@ -35,7 +35,6 @@ const EditProjectPage: NextPage = () => {
 
     try {
       const ValidatedData = editProjectValidate(adjustedData);
-      console.log(ValidatedData);
       const newProject = await request(createProjectClient(ValidatedData));
       if (!newProject) return;
 

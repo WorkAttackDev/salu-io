@@ -30,7 +30,7 @@ const UserCard = ({ className = "", isExpanded }: Props) => {
       setUser(null);
       replace("/");
     } catch (error) {
-      const err = error as AxiosError;
+      const err = error as AxiosError<any>;
       setErrors(err.response?.data.error || [err.message]);
       setIsOpen(true);
     }
