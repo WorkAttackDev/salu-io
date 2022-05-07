@@ -1,6 +1,6 @@
-import { Popover, Transition } from "@headlessui/react";
+import { Transition } from "@headlessui/react";
 import { PlusIcon } from "@heroicons/react/outline";
-import { Fragment, useEffect } from "react";
+import { Fragment, useEffect, useState } from "react";
 import shallow from "zustand/shallow";
 import {
   editTaskValidate,
@@ -17,6 +17,8 @@ import EditTaskForm from "./EditTaskForm";
 const AddTaskFloatButton = () => {
   const user = useAuthStore((state) => state.user);
   const { setErrors, setIsOpen } = useErrorStore();
+
+  const [open, setOpen] = useState(false);
 
   const { request, loading, error } = useApi<typeof editTaskClient>();
 
@@ -56,38 +58,37 @@ const AddTaskFloatButton = () => {
   };
 
   return (
-    <Popover>
-      {({ open, close }) => (
-        <>
-          <Popover.Button
-            title='Adicionar tarefa'
-            className={`group fixed bottom-12 right-12 flex p-6  rounded-xl duration-300 shadow-[0_0_2rem_transparent] bg-brand hover:shadow-brand/40  ${
-              open ? "rotate-[135deg]" : ""
-            }`}
-          >
-            <PlusIcon className='w-8 h-8 duration-300' />
-          </Popover.Button>
+    <div>
+      <button
+        onClick={() => setOpen((prev) => !prev)}
+        title='Adicionar tarefa'
+        className={`group fixed bottom-12 right-12 flex p-6  rounded-xl duration-300 shadow-[0_0_2rem_transparent] bg-brand hover:shadow-brand/40  ${
+          open ? "rotate-[135deg]" : ""
+        }`}
+      >
+        <PlusIcon className='w-8 h-8 duration-300' />
+      </button>
 
-          <Transition
-            as={Fragment}
-            enter='ease-out duration-300'
-            enterFrom='opacity-0 translate-y-12'
-            enterTo='opacity-100 translate-y-0'
-            leave='transition ease-in duration-150'
-            leaveFrom='opacity-100 translate-y-0'
-            leaveTo='opacity-0 translate-y-12'
-          >
-            <Popover.Panel className='absolute top-8 right-12 bottom-40 overflow-y-auto bg-brand-dark border-2 rounded-lg border-brand-gray-2/30 p-8'>
-              <SectionHeader title='Adicionar Tarefa' className='mb-12' />
-              <EditTaskForm
-                onSubmit={(d) => handleSubmit(d, close)}
-                isLoading={loading}
-              />
-            </Popover.Panel>
-          </Transition>
-        </>
-      )}
-    </Popover>
+      <Transition
+        show={open}
+        as={Fragment}
+        enter='ease-out duration-300'
+        enterFrom='opacity-0 translate-y-12'
+        enterTo='opacity-100 translate-y-0'
+        leave='transition ease-in duration-150'
+        leaveFrom='opacity-100 translate-y-0'
+        leaveTo='opacity-0 translate-y-12'
+      >
+        <div className='absolute top-8 right-12 bottom-40 overflow-y-auto bg-brand-dark border-2 rounded-lg border-brand-gray-2/30 p-8'>
+          <SectionHeader title='Adicionar Tarefa' className='mb-12' />
+
+          <EditTaskForm
+            onSubmit={(d) => handleSubmit(d, () => setOpen(false))}
+            isLoading={loading}
+          />
+        </div>
+      </Transition>
+    </div>
   );
 };
 

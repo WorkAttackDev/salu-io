@@ -6,17 +6,18 @@ type Props = {
   isOpen: boolean;
   className?: string;
   titleClassName?: string;
+  children: React.ReactNode;
   onClose?: () => void;
 };
 
-const Modal: React.FC<Props> = ({
+const Modal = ({
   children,
   isOpen,
   onClose,
   title,
   titleClassName = "",
   className = "",
-}) => {
+}: Props) => {
   return (
     <>
       <Transition appear show={isOpen} as={Fragment}>

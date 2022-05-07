@@ -1,7 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import { AuthMiddleware } from "../../../features/api/core/middlewares/auth";
-import { deleteTaskByIdController } from "../../../features/api/task/controllers/deleteTaskByIdController";
-import { handleServerError } from "../../../features/shared/lib/server_errors";
+import { AuthMiddleware } from "../../../../features/api/core/middlewares/auth";
+import { deleteTaskByIdController } from "../../../../features/api/task/controllers/deleteTaskByIdController";
+import { handleServerError } from "../../../../features/shared/lib/server_errors";
 
 export default async function handler(
   req: NextApiRequest,

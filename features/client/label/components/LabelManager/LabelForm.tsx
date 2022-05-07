@@ -3,6 +3,7 @@ import React from "react";
 import { useForm } from "react-hook-form";
 import { AddOrCreateLabelValidationParams } from "../../../../shared/lib/validation/label/addOrCreateLabel";
 import Button from "../../../core/components/Button";
+import InputField from "../../../core/components/InputField";
 import useTask from "../../../task/hooks/useTask";
 import useLabel from "../../hooks/useLabel";
 
@@ -56,13 +57,14 @@ const LabelForm = ({ onClose }: Props) => {
   return (
     <form className='space-y-8' onSubmit={handleSubmit(myHandleSubmit)}>
       <span className='flex items-center space-x-2'>
-        <input
+        <InputField
+          inline
+          labelText='Label'
           {...register("name")}
           defaultValue={editLabel?.name}
           maxLength={25}
-          placeholder='Nome do Label'
-          className='flex-1 rounded-lg bg-transparent duration-150 text-xl border-2 border-brand-gray/20 outline-none focus:border-brand-gray-3 p-2'
         />
+        {/* <input className='flex-1 rounded-lg bg-transparent duration-150 text-xl border-2 border-brand-gray/20 outline-none focus:border-brand-gray-3 p-2' /> */}
         <label className='relative' title='escolher cor'>
           <ColorSwatchIcon
             role='button'

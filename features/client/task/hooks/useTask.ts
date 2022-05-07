@@ -38,10 +38,13 @@ const useTask = () => {
     shallow
   );
 
-  const handleSelectTask = useCallback((task: MyTask) => {
-    setCurrTask(task);
-    setIsModalOpen(true);
-  }, []);
+  const handleSelectTask = useCallback(
+    (task: MyTask) => {
+      setCurrTask(task);
+      setIsModalOpen(true);
+    },
+    [isModalOpen]
+  );
 
   const handleCloseModal = () => {
     setIsModalOpen(false);
@@ -49,7 +52,8 @@ const useTask = () => {
 
     setTimeout(() => {
       setMode("info");
-    }, 1000);
+      setCurrTask(undefined);
+    }, 300);
   };
 
   const handleUpdateSubmit = async (data: EditTaskValidationParams) => {
@@ -60,6 +64,8 @@ const useTask = () => {
       projectId: data.projectId || currTask!.projectId,
       id: data.id || currTask!.id,
     };
+
+    console.log(adjustedData);
 
     try {
       const ValidatedData = editTaskValidate(adjustedData);

@@ -4,6 +4,8 @@ import React from "react";
 import { MyTask } from "../../../shared/models/myTask";
 import Button from "../../core/components/Button";
 import LabelList from "../../label/components/LabelList";
+import TodoManager from "../todo/components/TodoManager";
+import useTaskTodo from "../todo/hooks/useTaskTodo";
 
 type Props = {
   className?: string;
@@ -40,6 +42,7 @@ const TaskDetails = ({
         {task.description ?? ""}
       </pre>
       {task.labels && <LabelList labels={task.labels} />}
+      <TodoManager task={task} />
       <span className='flex items-center space-x-4'>
         <Button size='sm' onClick={onConfirm}>
           Editar

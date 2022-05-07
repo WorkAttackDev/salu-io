@@ -17,7 +17,19 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "jsx": "preserve",
-    "incremental": true
+    "incremental": true,
+    "baseUrl": ".",
+    "paths": {
+      "@/api/*": [
+        "./features/api/*"
+      ],
+      "@/client/*": [
+        "./features/client/*"
+      ],
+      "@/shared/*": [
+        "./features/shared/*"
+      ],
+    }
   },
   "include": [
     "next-env.d.ts",

@@ -3,6 +3,7 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import Script from "next/script";
 import React, { useEffect, useState } from "react";
+import { QueryClient, QueryClientProvider } from "react-query";
 import shallow from "zustand/shallow";
 import Button from "../features/client/core/components/Button";
 import Loading from "../features/client/core/components/Loading";
@@ -20,6 +21,8 @@ import PomodoroFloatBox from "../features/client/pomodoro/components/PomodoroFlo
 import { usePomodoroStore } from "../features/client/pomodoro/stores/usePomodoroStore";
 import { meClient } from "../features/client/user/client";
 import "../styles/globals.css";
+
+const queryClient = new QueryClient();
 
 function MyApp({ Component, pageProps }: AppProps) {
   const meQuery = useApi<typeof meClient>();
@@ -67,33 +70,39 @@ function MyApp({ Component, pageProps }: AppProps) {
   }, []);
 
   return (
-    <div className='flex h-full overflow-auto'>
-      <MetaInfo />
+    <QueryClientProvider client={queryClient}>
+      <div className='flex h-full overflow-auto'>
+        <MetaInfo />
 
-      {!isAuthRoute && <SideNav />}
-      {user || isAuthRoute ? (
-        <Component {...pageProps} />
-      ) : (
-        <MainLayout>
-          <SectionHeader
-            title='Inicie Sessão para continuar'
-            className='mb-8'
-          />
-          <Link href={linksObj.login.url}>
-            <a>
-              <Button>Iniciar Sessão</Button>
-            </a>
-          </Link>
-        </MainLayout>
-      )}
-      {showPomodoro && <PomodoroFloatBox />}
-      <Popup isOpen={isOpen} texts={errors} onClose={() => setIsOpen(false)} />
-      <Loading isLoading={loading || initLoading} />
-      <Script
-        src='https://accounts.google.com/gsi/client'
-        strategy='beforeInteractive'
-      />
-    </div>
+        {!isAuthRoute && <SideNav />}
+        {user || isAuthRoute ? (
+          <Component {...pageProps} />
+        ) : (
+          <MainLayout>
+            <SectionHeader
+              title='Inicie Sessão para continuar'
+              className='mb-8'
+            />
+            <Link href={linksObj.login.url}>
+              <a>
+                <Button>Iniciar Sessão</Button>
+              </a>
+            </Link>
+          </MainLayout>
+        )}
+        {showPomodoro && <PomodoroFloatBox />}
+        <Popup
+          isOpen={isOpen}
+          texts={errors}
+          onClose={() => setIsOpen(false)}
+        />
+        <Loading isLoading={loading || initLoading} />
+        <Script
+          src='https://accounts.google.com/gsi/client'
+          strategy='beforeInteractive'
+        />
+      </div>
+    </QueryClientProvider>
   );
 }
 

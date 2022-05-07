@@ -5,6 +5,7 @@ import React, { Fragment } from "react";
 
 type Props = {
   show: boolean;
+  children: React.ReactNode;
 };
 
 const FadeTransition: React.FC<Props> = ({ show, children }) => {

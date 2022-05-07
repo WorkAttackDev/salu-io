@@ -5,18 +5,14 @@ import React, { FC } from "react";
 type Props = {
   title: string;
   className?: string;
+  children?: React.ReactNode;
   link?: {
     href: string;
     label: string;
   };
 };
 
-const SectionHeader: FC<Props> = ({
-  title,
-  link,
-  children,
-  className = "",
-}) => {
+const SectionHeader = ({ title, link, children, className = "" }: Props) => {
   return (
     <header
       className={`flex justify-between items-center pt-8 border-t border-brand-gray/10 ${className}`}
