@@ -10,11 +10,6 @@ export const getProjectByIdController = async (
 ) => {
   const id = req.query.id as string;
 
-  if (isNaN(+id)) {
-    handleServerError(res, 400, ["id inválido"]);
-    return;
-  }
-
   try {
     const project = await prisma.project.findUnique({
       include: {
@@ -29,7 +24,7 @@ export const getProjectByIdController = async (
           },
         },
       },
-      where: { id: parseInt(id) },
+      where: { id: id },
     });
 
     if (!project) {

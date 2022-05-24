@@ -1,5 +1,5 @@
 import {
-  callAuthMiddleware,
+  callAuthWithCookieMiddleware,
   getNextConnectHandler,
 } from "../../../../../features/api/core/config/nextConnect";
 import deleteTaskTodoController from "../../../../../features/api/task/todo/controllers/deleteTaskTodoController";
@@ -11,7 +11,7 @@ const handler = getNextConnectHandler({
   errMessage: ["Ocorreu um erro relacionado as tarefas"],
 });
 
-callAuthMiddleware(handler);
+callAuthWithCookieMiddleware(handler);
 
 handler.get(getTaskTodosController);
 handler.post(upsertTaskTodoController);

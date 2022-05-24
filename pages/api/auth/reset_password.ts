@@ -1,22 +1,11 @@
-import type { NextApiRequest, NextApiResponse } from "next";
-import { resetTokenController } from "../../../features/api/users/controllers/reset_password";
+import { resetTokenController } from "../../../features/api/users/controllers/resetPasswordController";
+import { getNextConnectHandler } from "@/api/core/config/nextConnect";
 
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse
-) {
-  const { method } = req;
+const handler = getNextConnectHandler({
+  allowMethods: ["PATCH"],
+  errMessage: ["erro ao redefinir password"],
+});
 
-  switch (method) {
-    case "PATCH": {
-      await resetTokenController(req, res);
-      break;
-    }
+handler.patch(resetTokenController);
 
-    default:
-      // Todo Create a error handler function
-      res.setHeader("Allow", ["PATCH"]);
-      res.status(405).json({ error: `Metodo ${method} não permitido` });
-      break;
-  }
-}
+export default handler;

@@ -1,5 +1,5 @@
 import {
-  callAuthMiddleware,
+  callAuthWithCookieMiddleware,
   getNextConnectHandler,
 } from "../../../features/api/core/config/nextConnect";
 import addOrCreateLabelController from "../../../features/api/label/controllers/addOrCreateLabel";
@@ -9,7 +9,7 @@ const handler = getNextConnectHandler({
   errMessage: ["erro ao criar label"],
 });
 
-callAuthMiddleware(handler);
+callAuthWithCookieMiddleware(handler);
 
 handler.post(addOrCreateLabelController);
 

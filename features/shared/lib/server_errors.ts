@@ -10,6 +10,7 @@ export const handleServerError = (
   res.status(status).json({ data: null, errors: messages });
 };
 
+//! deprecated
 export const handleServerValidationError = (
   res: NextApiResponse,
   status: number,

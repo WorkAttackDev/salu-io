@@ -5,7 +5,7 @@ import { slugify } from "../../../api/users/controllers/util";
 
 const editUserValidator = z.object({
   id: z
-    .number({
+    .string({
       invalid_type_error: validationErrorMessages.invalidType("id", "number"),
       required_error: validationErrorMessages.required("id"),
     })

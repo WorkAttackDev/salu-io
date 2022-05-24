@@ -1,35 +1,18 @@
-import type { NextApiRequest, NextApiResponse } from "next";
-import { AuthMiddleware } from "../../../../features/api/core/middlewares/auth";
-import { deleteProjectController } from "../../../../features/api/project/controllers/deleteProjectController";
-import { getProjectByIdController } from "../../../../features/api/project/controllers/getProjectByIdController";
-import { handleServerError } from "../../../../features/shared/lib/server_errors";
+import {
+  callAuthWithCookieMiddleware,
+  getNextConnectHandler,
+} from "@/api/core/config/nextConnect";
+import { deleteProjectController } from "@/api/project/controllers/deleteProjectController";
+import { getProjectByIdController } from "@/api/project/controllers/getProjectByIdController";
 
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse
-) {
-  const { method } = req;
+const handler = getNextConnectHandler({
+  allowMethods: ["GET", "DELETE"],
+  errMessage: ["erro ao manipular projeto"],
+});
 
-  try {
-    await AuthMiddleware(req, res);
-  } catch (error) {
-    return handleServerError(res, 401, ["bearer token inválido"]);
-  }
+callAuthWithCookieMiddleware(handler);
 
-  switch (method) {
-    case "GET": {
-      await getProjectByIdController(req, res);
-      break;
-    }
+handler.get(getProjectByIdController);
+handler.delete(deleteProjectController);
 
-    case "DELETE": {
-      await deleteProjectController(req, res);
-      break;
-    }
-
-    default:
-      res.setHeader("Allow", ["GET", "DELETE"]);
-      res.status(405).end(`Metodo ${method} não permitido`);
-      break;
-  }
-}
+export default handler;

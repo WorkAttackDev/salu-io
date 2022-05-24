@@ -2,7 +2,7 @@ import type { AppProps } from "next/app";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import Script from "next/script";
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { QueryClient, QueryClientProvider } from "react-query";
 import shallow from "zustand/shallow";
 import Button from "../features/client/core/components/Button";
@@ -32,7 +32,6 @@ function MyApp({ Component, pageProps }: AppProps) {
   const { errors, isOpen, setIsOpen } = useErrorStore();
   const { loading, setLoading } = useLoadingStore();
   const showPomodoro = usePomodoroStore((s) => s.showPomodoro, shallow);
-  const [initLoading, setInitLoading] = useState(false);
   const isAuthRoute = router.pathname.includes("/auth");
 
   useEffect(() => {
@@ -42,15 +41,6 @@ function MyApp({ Component, pageProps }: AppProps) {
     router.events.on("routeChangeStart", handleRouteChangeOn);
     router.events.on("routeChangeComplete", handleRouteChangeOff);
     router.events.on("routeChangeError", handleRouteChangeOff);
-
-    let timeoutRef: NodeJS.Timeout;
-
-    if (!user) {
-      setInitLoading(true);
-      timeoutRef = setTimeout(() => {
-        setInitLoading(false);
-      }, 3000);
-    }
 
     !user &&
       (async () => {
@@ -62,7 +52,6 @@ function MyApp({ Component, pageProps }: AppProps) {
       })();
 
     return () => {
-      clearTimeout(timeoutRef);
       router.events.off("routeChangeStart", handleRouteChangeOn);
       router.events.off("routeChangeComplete", handleRouteChangeOff);
       router.events.off("routeChangeError", handleRouteChangeOff);
@@ -96,7 +85,7 @@ function MyApp({ Component, pageProps }: AppProps) {
           texts={errors}
           onClose={() => setIsOpen(false)}
         />
-        <Loading isLoading={loading || initLoading} />
+        <Loading isLoading={loading} />
         <Script
           src='https://accounts.google.com/gsi/client'
           strategy='beforeInteractive'

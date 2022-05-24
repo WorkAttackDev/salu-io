@@ -3,7 +3,6 @@ import { randomUUID } from "crypto";
 import { NextApiRequest, NextApiResponse } from "next";
 import prisma from "../../../../client/core/config/prisma";
 import { handleServerErrorV2 } from "../../../../shared/lib/server_errors";
-import { MyTaskTodoSchema } from "../../../../shared/models/MyTaskTodo";
 import { ApiResponse } from "../../../../shared/types";
 
 export default async function upsertTaskTodoController(
@@ -18,22 +17,17 @@ export default async function upsertTaskTodoController(
   };
 
   try {
-    const { taskId, text, todoId, done } = MyTaskTodoSchema.parse({
-      ...data,
-      taskId: +data.taskId,
-    });
-
     const todo = await prisma.taskTodo.upsert({
       where: {
-        id: todoId || randomUUID(),
+        id: data.todoId || randomUUID(),
       },
       update: {
-        text,
-        done,
+        text: data.text,
+        done: data.done,
       },
       create: {
-        text,
-        taskId,
+        text: data.text,
+        taskId: data.taskId as string,
       },
     });
 

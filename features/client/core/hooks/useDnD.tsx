@@ -1,6 +1,6 @@
 export type DnDItemType = {
   order: string;
-  id: number;
+  id: string;
 };
 
 const useDnD = <ItemType extends DnDItemType>(
@@ -9,7 +9,7 @@ const useDnD = <ItemType extends DnDItemType>(
 ) => {
   // const [dragIndex, setDragIndex] = useState<number>(-1);
 
-  const handleDragStart = (e: React.DragEvent<HTMLElement>, id: number) => {
+  const handleDragStart = (e: React.DragEvent<HTMLElement>, id: string) => {
     const target = e.currentTarget;
 
     target.style.opacity = "0.4";
@@ -41,7 +41,7 @@ const useDnD = <ItemType extends DnDItemType>(
 
   const handleDrop = (
     e: React.DragEvent<HTMLElement>,
-    id: number,
+    id: string,
     callback: (data: [DnDItemType] | [DnDItemType, DnDItemType]) => void,
     swap = false
   ) => {
@@ -51,7 +51,7 @@ const useDnD = <ItemType extends DnDItemType>(
 
     target.classList.remove("ring-2");
 
-    const newDragId = +e.dataTransfer.getData("text/plain");
+    const newDragId = e.dataTransfer.getData("text/plain");
 
     if (newDragId === id || !list.length) return false;
 

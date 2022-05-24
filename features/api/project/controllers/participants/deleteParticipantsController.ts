@@ -15,28 +15,17 @@ export const deleteParticipantsController = async (
       ownerId: string;
     };
 
-    if (
-      isNaN(+projectId) ||
-      (participantIds as Array<any>).some(isNaN) ||
-      isNaN(+ownerId)
-    ) {
-      handleServerError(res, 400, [
-        "ID do projeto, participante e dono devem ser números",
-      ]);
-      return;
-    }
-
-    if (!(await canUserModifyProject(res, +ownerId, +projectId))) return;
+    if (!(await canUserModifyProject(res, ownerId, projectId))) return;
 
     await prisma.projectParticipant.deleteMany({
       where: {
         user: {
           id: {
-            in: participantIds.map((id) => +id),
+            in: participantIds.map((id) => id),
           },
         },
         project: {
-          id: +projectId,
+          id: projectId,
         },
       },
     });

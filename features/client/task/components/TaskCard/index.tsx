@@ -1,11 +1,11 @@
-import { PlusCircleIcon } from "@heroicons/react/solid";
 import { ProjectStatus } from "@prisma/client";
-import React, { MouseEvent } from "react";
+import React from "react";
 import shallow from "zustand/shallow";
-import { MyTask } from "../../../shared/models/myTask";
-import useDnD, { DnDItemType } from "../../core/hooks/useDnD";
-import { calculateRemainTime } from "../../core/utils";
-import { useProjectStore } from "../../project/stores/useProductsStore";
+import { MyTask } from "../../../../shared/models/myTask";
+import useDnD, { DnDItemType } from "../../../core/hooks/useDnD";
+import { calculateRemainTime } from "../../../core/utils";
+import { useProjectStore } from "../../../project/stores/useProductsStore";
+import TaskCardTodoInfo from "./TaskCardTodoInfo";
 
 type Props = {
   className?: string;
@@ -72,7 +72,8 @@ const TaskCard = ({ task, onSelect, onMoveCard }: Props) => {
           startDate: task.endDate,
         })}
       </p>
-      <p className='text-lg'>{task.description}</p>
+      <p className='text-xl'>{task.description}</p>
+      <TaskCardTodoInfo />
     </li>
   );
 };

@@ -11,51 +11,13 @@ import useApi from "../../core/hooks/use_api";
 import { useAuthStore } from "../../core/stores/authStore";
 import { useErrorStore } from "../../core/stores/errorStore";
 import { useProjectStore } from "../../project/stores/useProductsStore";
-import { editTaskClient } from "../clientApi/createTaskClient";
+import useEditTask from "../hooks/useEditTask";
 import EditTaskForm from "./EditTaskForm";
 
 const AddTaskFloatButton = () => {
-  const user = useAuthStore((state) => state.user);
-  const { setErrors, setIsOpen } = useErrorStore();
+  const { handleEditTask, isLoading } = useEditTask();
 
   const [open, setOpen] = useState(false);
-
-  const { request, loading, error } = useApi<typeof editTaskClient>();
-
-  const { project, setProject } = useProjectStore(
-    (state) => ({
-      project: state.selectedProject,
-      setProject: state.setSelectedProject,
-    }),
-    shallow
-  );
-
-  useEffect(() => {
-    if (!error) return;
-    setErrors(error);
-    setIsOpen(true);
-  }, [error]);
-
-  const handleSubmit = async (
-    data: EditTaskValidationParams,
-    close: () => void
-  ) => {
-    if (!user || !project) return;
-
-    const adjustedData: EditTaskValidationParams = {
-      ...data,
-      projectId: project.id,
-    };
-
-    const ValidatedData = editTaskValidate(adjustedData);
-    const newTask = await request(editTaskClient(ValidatedData));
-    if (!newTask) return;
-
-    project?.tasks?.push(newTask);
-    setProject(project);
-
-    close();
-  };
 
   return (
     <div>
@@ -82,10 +44,7 @@ const AddTaskFloatButton = () => {
         <div className='absolute top-8 right-12 bottom-40 overflow-y-auto bg-brand-dark border-2 rounded-lg border-brand-gray-2/30 p-8'>
           <SectionHeader title='Adicionar Tarefa' className='mb-12' />
 
-          <EditTaskForm
-            onSubmit={(d) => handleSubmit(d, () => setOpen(false))}
-            isLoading={loading}
-          />
+          <EditTaskForm onSubmit={handleEditTask} isLoading={isLoading} />
         </div>
       </Transition>
     </div>

@@ -14,14 +14,12 @@ type Props = {
   project: MyProject;
   usersInfo: MyUserInfo[];
   onReject: () => void;
-  onConclude?: () => void;
 };
 
 const AddParticipantsSection = ({
   project,
   usersInfo,
   onReject,
-  onConclude,
   mode = "add",
 }: Props) => {
   const user = useAuthStore((state) => state.user);
@@ -54,7 +52,9 @@ const AddParticipantsSection = ({
 
     const formData = new FormData(e.currentTarget);
 
-    const userIds = Array.from(formData.entries()).map(([, value]) => +value);
+    const userIds = Array.from(formData.entries()).map(([, value]) =>
+      value.toString()
+    );
 
     if (!userIds.length) return;
 
@@ -65,7 +65,6 @@ const AddParticipantsSection = ({
 
       if (!res) return;
 
-      onConclude?.();
       onReject();
     }
 
@@ -76,7 +75,6 @@ const AddParticipantsSection = ({
 
       if (!res) return;
 
-      onConclude?.();
       onReject();
     }
   };

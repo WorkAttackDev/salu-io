@@ -1,64 +1,50 @@
-import { Token } from "@prisma/client";
+import { WdkApp } from "@/api/core/config/app";
+import { WdkMailer } from "@/api/mailer";
+import { Mailer, UserUseCases } from "@workattackdev/wdk";
 import { NextApiRequest, NextApiResponse } from "next";
-import prisma from "../../../client/core/config/prisma";
-import {
-  handleServerError,
-  handleServerValidationError,
-} from "../../../shared/lib/server_errors";
+import { handleServerErrorV2 } from "../../../shared/lib/server_errors";
 import { forgetPasswordValidate } from "../../../shared/lib/validation";
 import { ApiResponse } from "../../../shared/types";
-import { HOST } from "../../../shared/utils";
-import { sendEmail } from "../../core/config/email/email";
-import { forgetPasswordHTMLTemplate } from "../../core/config/email/templates/forget_password";
+import createForgotTokenRepository from "../dataRepositories/implementations/createForgotTokenRepository";
+import deleteManyForgetTokenRepository from "../dataRepositories/implementations/deleteManyForgetTokenRepository";
+import findUserByEmailRepository from "../dataRepositories/implementations/findUserByEmailRepository";
 
 export const forgetPasswordController = async (
   req: NextApiRequest,
-  res: NextApiResponse<ApiResponse<Token>>
+  res: NextApiResponse<ApiResponse<boolean>>
 ) => {
   try {
     const { email } = forgetPasswordValidate(req.body);
 
-    try {
-      const user = await prisma.user.findUnique({ where: { email } });
+    const data = await UserUseCases.forgotPasswordUseCase({
+      data: {
+        email,
+      },
+      createForgotToken: createForgotTokenRepository,
+      deleteManyForgetToken: deleteManyForgetTokenRepository,
+      findUserByEmail: findUserByEmailRepository,
+      forgotPasswordEmailTemplate: (data) =>
+        Mailer.Templates.forgotPasswordEmailTemplate({ ...data, app: WdkApp }),
+      mailer: await WdkMailer,
+      sendEmail: Mailer.sendEmail,
+    });
 
-      if (!user) {
-        handleServerError(res, 400, ["usuário não existe"]);
-        return;
-      }
-
-      if (user.providerId) {
-        handleServerError(res, 400, ["usuário iniciou sessão com um provedor"]);
-        return;
-      }
-
-      await prisma.token.deleteMany({
-        where: { userId: user.id, AND: { type: "FORGET_TOKEN" } },
+    if (!data.data) {
+      return handleServerErrorV2({
+        res,
+        messages: data.errors || ["Ocorreu um erro ao buscar dados do usuário"],
+        err: new Error("No data returned from wdk forgot password use case"),
+        status: 400,
       });
-
-      const expiresAt = new Date(Date.now() + 3_600_000);
-
-      const token = await prisma.token.create({
-        data: {
-          expiresAt,
-          owner: { connect: { id: user.id } },
-          type: "FORGET_TOKEN",
-        },
-      });
-
-      await sendEmail(
-        user.email,
-        "Recuperação de Password",
-        forgetPasswordHTMLTemplate(
-          HOST + "/auth/reset-password?token=" + token.token
-        )
-      );
-
-      res.status(200).json({ data: token, errors: null });
-    } catch (error) {
-      console.log(error);
-      handleServerError(res, 500, ["ocorreu um erro ao redefinir a password"]);
     }
-  } catch (err) {
-    handleServerValidationError(res, 400, err);
+
+    res.status(200).json({ data: data.data, errors: null });
+  } catch (error) {
+    handleServerErrorV2({
+      err: error as any,
+      res,
+      status: 500,
+      messages: ["ocorreu um erro ao redefinir a password"],
+    });
   }
 };

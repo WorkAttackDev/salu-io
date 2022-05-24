@@ -1,29 +1,16 @@
-import type { NextApiRequest, NextApiResponse } from "next";
-import { AuthMiddleware } from "../../../../features/api/core/middlewares/auth";
-import { deleteTaskByIdController } from "../../../../features/api/task/controllers/deleteTaskByIdController";
-import { handleServerError } from "../../../../features/shared/lib/server_errors";
+import {
+  callAuthWithCookieMiddleware,
+  getNextConnectHandler,
+} from "@/api/core/config/nextConnect";
+import { deleteTaskByIdController } from "@/api/task/controllers/deleteTaskByIdController";
 
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse
-) {
-  const { method } = req;
+const handler = getNextConnectHandler({
+  allowMethods: ["DELETE"],
+  errMessage: ["erro ao deletar tarefa"],
+});
 
-  try {
-    await AuthMiddleware(req, res);
-  } catch (error) {
-    return handleServerError(res, 401, ["bearer token inválido"]);
-  }
+callAuthWithCookieMiddleware(handler);
 
-  switch (method) {
-    case "DELETE": {
-      await deleteTaskByIdController(req, res);
-      break;
-    }
+handler.delete(deleteTaskByIdController);
 
-    default:
-      res.setHeader("Allow", ["DELETE"]);
-      res.status(405).end(`Metodo ${method} não permitido`);
-      break;
-  }
-}
+export default handler;

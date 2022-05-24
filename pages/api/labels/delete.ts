@@ -1,5 +1,5 @@
 import {
-  callAuthMiddleware,
+  callAuthWithCookieMiddleware,
   getNextConnectHandler,
 } from "../../../features/api/core/config/nextConnect";
 import deleteLabelController from "../../../features/api/label/controllers/deleteLabel";
@@ -9,7 +9,7 @@ const handler = getNextConnectHandler({
   errMessage: ["erro ao deletar label"],
 });
 
-callAuthMiddleware(handler);
+callAuthWithCookieMiddleware(handler);
 
 handler.delete(deleteLabelController);
 

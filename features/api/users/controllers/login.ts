@@ -1,57 +1,50 @@
+import { WdkApp } from "@/api/core/config/app";
+import { handleServerErrorV2 } from "@/shared/lib/server_errors";
+import { loginValidation } from "@/shared/lib/validation";
+import { UserUseCases } from "@workattackdev/wdk";
+import type { ApiResponse } from "@workattackdev/wdk/lib/core";
 import { NextApiRequest, NextApiResponse } from "next";
-import prisma from "../../../client/core/config/prisma";
-import {
-  handleServerError,
-  handleServerValidationError,
-} from "../../../shared/lib/server_errors";
-import { loginValidation } from "../../../shared/lib/validation";
-import { MyUser } from "../../../shared/models/myUser";
-import { ApiResponse } from "../../../shared/types";
-import { compareHash } from "../util/hash";
-import { issueJWToken } from "../util/jwt";
-import { sanitizedUser } from "./util";
+import { MyUser, MyWdkUser } from "../../../shared/models/myUser";
+import createRefreshTokenRepository from "../dataRepositories/implementations/createRefreshTokenRepository";
+import deleteUserRefreshTokensRepository from "../dataRepositories/implementations/deleteUserRefreshTokensRepository";
+import findUserByEmailRepository from "../dataRepositories/implementations/findUserByEmailRepository";
+import { cookiesInstance } from "../services/cookies";
 
 export const loginController = async (
   req: NextApiRequest,
-  res: NextApiResponse<ApiResponse<{ token: string; user: MyUser }>>
+  res: NextApiResponse<ApiResponse<MyUser>>
 ) => {
   try {
     const { email, password } = loginValidation(req.body);
-    try {
-      const user = await prisma.user.findUnique({ where: { email } });
 
-      if (!user) {
-        handleServerError(res, 400, ["usuário não existe"]);
-        return;
-      }
+    const loginRes = await UserUseCases.loginUseCase<MyWdkUser>({
+      app: WdkApp,
+      data: { email, password },
+      createRefreshToken: createRefreshTokenRepository,
+      deleteUserRefreshTokens: deleteUserRefreshTokensRepository,
+      findUserByEmail: findUserByEmailRepository,
+      cookiesInstance: cookiesInstance(req, res),
+    });
 
-      if (user.providerId) {
-        handleServerError(res, 403, ["usuário não existe"]);
-        return;
-      }
-
-      const isValidPassword = await compareHash(password, user.password);
-
-      if (!isValidPassword) {
-        handleServerError(res, 400, ["password incorreta"]);
-        return;
-      }
-
-      const { token } = await issueJWToken({
-        req,
+    if (!loginRes.data) {
+      return handleServerErrorV2({
         res,
-        generateRefreshToken: true,
-        userId: user.id.toString(),
+        messages: loginRes.errors || ["Ocorreu um erro ao iniciar sessão"],
+        err: new Error("No data returned from wdk login use case"),
+        status: 400,
       });
-
-      res
-        .status(200)
-        .json({ data: { token, user: sanitizedUser(user) }, errors: null });
-    } catch (error) {
-      console.log(error);
-      handleServerError(res, 500, ["ocorreu um erro ao fazer o login"]);
     }
-  } catch (err) {
-    handleServerValidationError(res, 400, err);
+
+    res.status(200).json({
+      data: loginRes.data.user,
+      errors: null,
+    });
+  } catch (error) {
+    handleServerErrorV2({
+      err: error as any,
+      res,
+      status: 500,
+      messages: ["ocorreu um erro ao iniciar sessão"],
+    });
   }
 };

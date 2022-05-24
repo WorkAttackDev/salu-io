@@ -5,7 +5,7 @@ import { ApiResponse } from "../../../shared/types";
 import { AxiosInstance } from "../../core/config/client";
 
 export const updateProjectClient = async (
-  projectId: number,
+  projectId: string,
   data: EditProjectValidationParams
 ) => {
   const res = await AxiosInstance.post<

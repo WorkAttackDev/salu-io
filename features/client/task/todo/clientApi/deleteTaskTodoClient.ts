@@ -5,7 +5,7 @@ import { AxiosInstance } from "../../../core/config/client";
 import { useErrorStore } from "../../../core/stores/errorStore";
 
 export type DeleteTaskTodoParams = {
-  taskId: number;
+  taskid: string;
   todoId: string;
 };
 

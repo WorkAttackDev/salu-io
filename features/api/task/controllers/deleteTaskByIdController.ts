@@ -7,17 +7,12 @@ export const deleteTaskByIdController = async (
   req: NextApiRequest,
   res: NextApiResponse<ApiResponse<boolean>>
 ) => {
-  const id = req.query.id;
-
-  if (isNaN(+id)) {
-    handleServerError(res, 400, ["id inválido"]);
-    return;
-  }
+  const id = req.query.id as string;
 
   try {
     await prisma.task.delete({
       where: {
-        id: +id,
+        id: id,
       },
     });
 

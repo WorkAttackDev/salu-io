@@ -6,11 +6,11 @@ const removeLabelValidator = z.object({
     required_error: validationErrorMessages.required("id"),
     invalid_type_error: validationErrorMessages.invalidType("id", "string"),
   }),
-  taskId: z.number({
+  taskId: z.string({
     required_error: validationErrorMessages.required("projectOrTaskId"),
     invalid_type_error: validationErrorMessages.invalidType(
       "projectOrTaskId",
-      "number"
+      "string"
     ),
   }),
 });

@@ -1,30 +1,16 @@
-import type { NextApiRequest, NextApiResponse } from "next";
-import { AuthMiddleware } from "../../../features/api/core/middlewares/auth";
+import {
+  callAuthWithCookieMiddleware,
+  getNextConnectHandler,
+} from "@/api/core/config/nextConnect";
 import { getUsersController } from "../../../features/api/users/controllers/getUsersController";
-import { handleServerError } from "../../../features/shared/lib/server_errors";
 
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse
-) {
-  const { method } = req;
+const handler = getNextConnectHandler({
+  allowMethods: ["GET"],
+  errMessage: ["erro ao buscar dados do usuários"],
+});
 
-  try {
-    await AuthMiddleware(req, res);
-  } catch (error) {
-    return handleServerError(res, 401, ["bearer token inválido"]);
-  }
+callAuthWithCookieMiddleware(handler);
 
-  switch (method) {
-    case "GET": {
-      await getUsersController(req, res);
-      break;
-    }
+handler.get(getUsersController);
 
-    default:
-      // Todo Create a error handler function
-      res.setHeader("Allow", ["GET"]);
-      res.status(405).json({ error: `Método ${method} não permitido` });
-      break;
-  }
-}
+export default handler;

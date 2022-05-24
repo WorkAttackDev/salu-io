@@ -11,14 +11,9 @@ export const deleteProjectController = async (
 
   const { userId } = req.body;
 
-  if (isNaN(+id)) {
-    handleServerError(res, 400, ["id inválido"]);
-    return;
-  }
-
   try {
     await prisma.project.deleteMany({
-      where: { id: +id, ownerId: userId },
+      where: { id: id, ownerId: userId },
     });
 
     res.status(200).json({ data: true, errors: null });

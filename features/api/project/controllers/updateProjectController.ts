@@ -9,18 +9,13 @@ export const updateProjectController = async (
   req: NextApiRequest,
   res: NextApiResponse<ApiResponse<Project>>
 ) => {
-  const { id } = req.query;
+  const id = req.query.id as string;
   const { description, endDate, name, ownerId, startDate, status } =
     editProjectValidate(req.body);
 
-  if (isNaN(+id)) {
-    handleServerError(res, 400, ["id inválido"]);
-    return;
-  }
-
   try {
     const project = await prisma.project.findFirst({
-      where: { id: +id, AND: { ownerId: ownerId } },
+      where: { id: id, AND: { ownerId: ownerId } },
     });
 
     if (!project) {
@@ -29,7 +24,7 @@ export const updateProjectController = async (
     }
 
     const updatedProject = await prisma.project.update({
-      where: { id: +id },
+      where: { id: id },
       data: {
         description: description || undefined,
         endDate: endDate ? new Date(endDate) : null,

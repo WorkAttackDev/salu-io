@@ -1,3 +1,4 @@
+import useGetProject from "@/client/project/hooks/useGetProject";
 import { Label, ProjectStatus } from "@prisma/client";
 import dayjs from "dayjs";
 import { NextPage } from "next";
@@ -8,16 +9,11 @@ import MainLayout from "../../features/client/core/components/MainLayout";
 import Modal from "../../features/client/core/components/Modal";
 import OptionDropdown from "../../features/client/core/components/OptionDropdown";
 import SectionHeader from "../../features/client/core/components/SectionHeader";
-import useApi from "../../features/client/core/hooks/use_api";
 import LabelList from "../../features/client/label/components/LabelList";
-import { getProjectByIdClient } from "../../features/client/project/clientApi/getProjectByIdClient";
 import AddParticipantsSection from "../../features/client/project/components/AddParticipantsSection";
 import ProjectParticipantsSection from "../../features/client/project/components/ProjectParticipantsSection";
-import useProject from "../../features/client/project/hooks/useProject";
-import { useProjectStore } from "../../features/client/project/stores/useProductsStore";
 import AddTaskFloatButton from "../../features/client/task/components/AddTaskFloatButton";
 import TasksColumn from "../../features/client/task/components/TasksColumn";
-import { getUsersClient } from "../../features/client/user/clientApi/getUsersClient";
 import useUser from "../../features/client/user/hooks/useUser";
 import { MyProject } from "../../features/shared/models/myProjectTasks";
 import { MyTask } from "../../features/shared/models/myTask";
@@ -46,8 +42,6 @@ const ProjectDescriptionSection = ({ project, owner }: Props) => {
   );
 };
 
-let isInitial = true;
-
 const columns = [
   { label: "Em Carteira", status: ProjectStatus.TODO },
   { label: "Em Progresso", status: ProjectStatus.IN_PROGRESS },
@@ -62,7 +56,9 @@ const ProjectPage: NextPage = () => {
   const [filterLabel, setFilterLabel] = useState<Label | undefined>(undefined);
   const [filteredTasks, setFilteredTasks] = useState<MyTask[] | undefined>();
 
-  const { localGetProjectById, loading: projectLoading } = useProject();
+  const { project, isLoading: getProjectIsLoading } = useGetProject(
+    query.id as string
+  );
 
   const [showAddParticipantModal, setShowAddParticipantModal] = useState<{
     isOpen: boolean;
@@ -91,22 +87,6 @@ const ProjectPage: NextPage = () => {
     },
   ];
 
-  const { project } = useProjectStore((state) => ({
-    project: state.selectedProject,
-  }));
-
-  useEffect(() => {
-    const id = query.id as string;
-
-    if (!id) return;
-
-    (async () => {
-      if (isInitial) isInitial = false;
-
-      await localGetProjectById(id);
-    })();
-  }, [query]);
-
   useEffect(() => {
     if (!filterLabel) {
       return setFilteredTasks(undefined);
@@ -121,7 +101,7 @@ const ProjectPage: NextPage = () => {
 
   return (
     <MainLayout className='flex flex-col space-y-8 overflow-auto h-max'>
-      <Loading isLoading={loading || projectLoading || isInitial} />
+      <Loading isLoading={loading || getProjectIsLoading} />
       <SectionHeader title={project?.name ?? "Desconhecido"}>
         <OptionDropdown items={dropdownOptions} />
       </SectionHeader>
@@ -163,7 +143,6 @@ const ProjectPage: NextPage = () => {
           >
             <AddParticipantsSection
               mode={showAddParticipantModal.mode}
-              onConclude={() => localGetProjectById(query.id as string)}
               project={project}
               usersInfo={users || []}
               onReject={() => setShowAddParticipantModal({ isOpen: false })}

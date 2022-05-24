@@ -36,11 +36,11 @@ enum ProjectStatus {
 // Models
 
 model Token {
-  id        Int       @id @default(autoincrement())
+  id        String    @id @default(uuid())
   type      TokenType
   token     String    @unique @default(uuid())
   owner     User      @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  userId    Int
+  userId    String
   expiresAt DateTime
   createdAt DateTime  @default(now())
 
@@ -48,7 +48,7 @@ model Token {
 }
 
 model User {
-  id            Int      @id @default(autoincrement())
+  id            String   @id @default(uuid())
   email         String   @unique @db.VarChar(255)
   emailVerified Boolean  @default(false)
   name          String   @db.VarChar(200)
@@ -67,14 +67,14 @@ model User {
 }
 
 model Project {
-  id          Int           @id @default(autoincrement())
+  id          String        @id @default(uuid())
   name        String        @db.VarChar(200)
   description String?       @default("Sem descrição") @db.VarChar(1000)
   status      ProjectStatus @default(TODO)
   tasks       Task[]
 
-  ownerId Int
-  owner   User @relation(fields: [ownerId], references: [id])
+  ownerId String
+  owner   User   @relation(fields: [ownerId], references: [id])
 
   startDate DateTime? @db.DateTime
   endDate   DateTime? @db.DateTime
@@ -90,8 +90,8 @@ model Project {
 
 model ProjectParticipant {
   id        Int      @id @default(autoincrement())
-  projectId Int
-  userId    Int
+  projectId String
+  userId    String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -102,12 +102,12 @@ model ProjectParticipant {
 }
 
 model Task {
-  id          Int           @id @default(autoincrement())
+  id          String        @id @default(uuid())
   name        String        @db.VarChar(200)
   description String?       @default("Sem descrição") @db.VarChar(1000)
   status      ProjectStatus @default(TODO)
 
-  projectId Int
+  projectId String
   project   Project @relation(fields: [projectId], references: [id])
 
   startDate DateTime? @db.DateTime
@@ -127,8 +127,8 @@ model TaskTodo {
   text String  @db.VarChar(200)
   done Boolean @default(false)
 
-  taskId Int
-  task   Task @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  taskId String
+  task   Task   @relation(fields: [taskId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

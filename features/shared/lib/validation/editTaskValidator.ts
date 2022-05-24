@@ -4,15 +4,15 @@ import { validationErrorMessages } from ".";
 
 const editTaskValidator = z.object({
   id: z
-    .number({
-      invalid_type_error: validationErrorMessages.invalidType("id", "number"),
+    .string({
+      invalid_type_error: validationErrorMessages.invalidType("id", "string"),
     })
     .optional(),
-  projectId: z.number({
+  projectId: z.string({
     required_error: validationErrorMessages.required("projectId"),
     invalid_type_error: validationErrorMessages.invalidType(
       "projectId",
-      "number"
+      "string"
     ),
   }),
   name: z

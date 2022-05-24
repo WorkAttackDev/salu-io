@@ -1,33 +1,18 @@
-import type { NextApiRequest, NextApiResponse } from "next";
-import { AuthMiddleware } from "../../../../features/api/core/middlewares/auth";
-import { addParticipantsController } from "../../../../features/api/project/controllers/participants/addParticipantsController";
-import { deleteParticipantsController } from "../../../../features/api/project/controllers/participants/deleteParticipantsController";
-import { handleServerError } from "../../../../features/shared/lib/server_errors";
+import {
+  callAuthWithCookieMiddleware,
+  getNextConnectHandler,
+} from "@/api/core/config/nextConnect";
+import { addParticipantsController } from "@/api/project/controllers/participants/addParticipantsController";
+import { deleteParticipantsController } from "@/api/project/controllers/participants/deleteParticipantsController";
 
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse
-) {
-  const { method } = req;
+const handler = getNextConnectHandler({
+  allowMethods: ["POST", "DELETE"],
+  errMessage: ["erro na rota de participantes"],
+});
 
-  try {
-    await AuthMiddleware(req, res);
-  } catch (error) {
-    return handleServerError(res, 401, ["bearer token inválido"]);
-  }
+callAuthWithCookieMiddleware(handler);
 
-  switch (method) {
-    case "POST": {
-      await addParticipantsController(req, res);
-      return;
-    }
-    case "DELETE": {
-      await deleteParticipantsController(req, res);
-      return;
-    }
-    default:
-      res.setHeader("Allow", ["POST", "DELETE"]);
-      res.status(405).end(`Método ${method} não permitido`);
-      break;
-  }
-}
+handler.post(addParticipantsController);
+handler.delete(deleteParticipantsController);
+
+export default handler;

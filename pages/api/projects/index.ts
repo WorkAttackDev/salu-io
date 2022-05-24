@@ -1,28 +1,16 @@
-import type { NextApiRequest, NextApiResponse } from "next";
-import { AuthMiddleware } from "../../../features/api/core/middlewares/auth";
-import { getProjectsController } from "../../../features/api/project/controllers/getProjectsController";
-import { handleServerError } from "../../../features/shared/lib/server_errors";
+import {
+  callAuthWithCookieMiddleware,
+  getNextConnectHandler,
+} from "@/api/core/config/nextConnect";
+import { getProjectsController } from "@/api/project/controllers/getProjectsController";
 
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse
-) {
-  const { method } = req;
+const handler = getNextConnectHandler({
+  allowMethods: ["GET"],
+  errMessage: ["erro ao recuperar projetos"],
+});
 
-  try {
-    await AuthMiddleware(req, res);
-  } catch (error) {
-    return handleServerError(res, 401, ["bearer token inválido"]);
-  }
+callAuthWithCookieMiddleware(handler);
 
-  switch (method) {
-    case "GET": {
-      await getProjectsController(req, res);
-      return;
-    }
-    default:
-      res.setHeader("Allow", ["GET"]);
-      res.status(405).end(`Metodo ${method} não permitido`);
-      break;
-  }
-}
+handler.get(getProjectsController);
+
+export default handler;

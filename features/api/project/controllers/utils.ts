@@ -5,8 +5,8 @@ import { tryCatch } from "../../../shared/lib/try_catch";
 
 export const canUserModifyProject = async (
   res: NextApiResponse,
-  ownerId: number,
-  projectId: number
+  ownerId: string,
+  projectId: string
 ): Promise<boolean> => {
   const [owner, isAllowedError] = await tryCatch(
     prisma.user.findFirst({

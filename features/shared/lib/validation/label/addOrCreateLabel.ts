@@ -9,11 +9,11 @@ const addOrCreateLabelValidator = z.object({
       invalid_type_error: validationErrorMessages.invalidType("id", "string"),
     })
     .optional(),
-  projectOrTaskId: z.number({
+  projectOrTaskId: z.string({
     required_error: validationErrorMessages.required("projectOrTaskId"),
     invalid_type_error: validationErrorMessages.invalidType(
       "projectOrTaskId",
-      "number"
+      "string"
     ),
   }),
   name: z

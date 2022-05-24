@@ -1,5 +1,5 @@
 import { ProjectStatus, Task } from "@prisma/client";
-import React, { useEffect } from "react";
+import React from "react";
 import { useForm } from "react-hook-form";
 import { EditTaskValidationParams } from "../../../shared/lib/validation/editTaskValidator";
 import Button from "../../core/components/Button";

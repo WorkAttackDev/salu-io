@@ -47,7 +47,7 @@ const formattedTimer = (seconds: number): string => {
 };
 
 export const usePomodoroStore = create<PomodoroStoreType>((set, get) => ({
-  showPomodoro: true,
+  showPomodoro: false,
   remainingTime: BASE_POMODORO_DURATION,
   isRunning: false,
   type: "pomodoro",

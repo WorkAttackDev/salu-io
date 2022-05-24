@@ -10,21 +10,10 @@ export const addParticipantsController = async (
   try {
     const { projectId, participantIds, ownerId } = req.body;
 
-    if (
-      isNaN(projectId) ||
-      (participantIds as Array<any>).some(isNaN) ||
-      isNaN(ownerId)
-    ) {
-      handleServerError(res, 400, [
-        "ID do projeto, participante e dono devem ser números",
-      ]);
-      return;
-    }
-
     if (!(await canUserModifyProject(res, ownerId, projectId))) return;
 
     await prisma.projectParticipant.createMany({
-      data: participantIds.map((participantId: number) => ({
+      data: participantIds.map((participantId: string) => ({
         projectId: projectId,
         userId: participantId,
       })),

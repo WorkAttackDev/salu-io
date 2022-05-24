@@ -20,33 +20,38 @@ export const editTaskController = async (
       description: description || undefined,
       endDate: endDate ? new Date(endDate) : null,
       name,
-      project: {
-        connect: {
-          id: projectId,
-        },
-      },
       status,
       startDate: startDate ? new Date(startDate) : new Date(),
     };
 
     try {
-      if (!id) {
-        const newTask = await prisma.task.create({
-          data: taskData,
-        });
-
-        res.status(201).json({ data: newTask, errors: null });
-        return;
-      }
-
-      const updatedTask = await prisma.task.update({
+      const task = await prisma.task.upsert({
         where: {
-          id: id,
+          id,
         },
-        data: taskData,
+        update: taskData,
+        create: { ...taskData, projectId },
       });
 
-      res.status(200).json({ data: updatedTask, errors: null });
+      res.status(200).json({ data: task, errors: null });
+
+      // if (!id) {
+      //   const newTask = await prisma.task.create({
+      //     data: { ...taskData, projectId },
+      //   });
+
+      //   res.status(201).json({ data: newTask, errors: null });
+      //   return;
+      // }
+
+      // const updatedTask = await prisma.task.update({
+      //   where: {
+      //     id: id,
+      //   },
+      //   data: taskData,
+      // });
+
+      // res.status(200).json({ data: updatedTask, errors: null });
     } catch (error) {
       console.log(error);
       handleServerError(res, 500, [

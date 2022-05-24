@@ -4,23 +4,16 @@ import { validationErrorMessages } from ".";
 
 const editProjectValidator = z.object({
   id: z
-    .number({
+    .string({
       invalid_type_error: validationErrorMessages.invalidType("id", "number"),
     })
     .optional(),
-  ownerId: z.number({
+  ownerId: z.string({
     invalid_type_error: validationErrorMessages.invalidType(
       "ownerId",
-      "number"
+      "string"
     ),
   }),
-  name: z
-    .string({
-      required_error: validationErrorMessages.required("nome"),
-      invalid_type_error: validationErrorMessages.invalidType("nome", "string"),
-    })
-    .max(200, validationErrorMessages.max("nome", 200))
-    .min(2, validationErrorMessages.min("nome", 2)),
   description: z
     .string({
       required_error: validationErrorMessages.required("description"),
@@ -31,6 +24,13 @@ const editProjectValidator = z.object({
     })
     .max(250, validationErrorMessages.max("description", 1000))
     .optional(),
+  name: z
+    .string({
+      required_error: validationErrorMessages.required("nome"),
+      invalid_type_error: validationErrorMessages.invalidType("nome", "string"),
+    })
+    .max(200, validationErrorMessages.max("nome", 200))
+    .min(2, validationErrorMessages.min("nome", 2)),
   status: z.nativeEnum(ProjectStatus).optional(),
 
   startDate: z

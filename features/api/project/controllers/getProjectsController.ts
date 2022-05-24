@@ -22,13 +22,11 @@ export const getProjectsController = async (
     userId?: string;
   };
 
-  if (!userId || isNaN(+userId)) {
+  if (!userId) {
     return handleServerError(res, 400, [
       "Não foi possível encontrar o usuário",
     ]);
   }
-
-  const userIdNum = +userId;
 
   const currentPage = Number(page) || 0;
   const perPage = Number(limit) || 20;
@@ -43,8 +41,8 @@ export const getProjectsController = async (
       orderBy: { updatedAt: sortByDate },
       where: {
         OR: [
-          { ownerId: userIdNum },
-          { participants: { some: { userId: userIdNum } } },
+          { ownerId: userId },
+          { participants: { some: { userId: userId } } },
         ],
         AND: name ? { name: { contains: name } } : undefined,
       },
@@ -53,8 +51,8 @@ export const getProjectsController = async (
     const total = await prisma.project.count({
       where: {
         OR: [
-          { ownerId: userIdNum },
-          { participants: { some: { userId: userIdNum } } },
+          { ownerId: userId },
+          { participants: { some: { userId: userId } } },
         ],
         AND: name ? { name: { contains: name } } : undefined,
       },

@@ -6,7 +6,7 @@ export const linksObj = {
   projects: { url: "/projects", label: "Projetos", Icon: BriefcaseIcon },
   users: { url: "/users", label: "Usuários", Icon: UserIcon },
   project: {
-    url: (id: number) => `/projects/${id}`,
+    url: (id: string) => `/projects/${id}`,
     label: (projName: string) => projName,
   },
   settings: { url: "/settings", label: "Configurações" },

@@ -5,7 +5,6 @@ import { MyTask } from "../../../shared/models/myTask";
 import Button from "../../core/components/Button";
 import LabelList from "../../label/components/LabelList";
 import TodoManager from "../todo/components/TodoManager";
-import useTaskTodo from "../todo/hooks/useTaskTodo";
 
 type Props = {
   className?: string;

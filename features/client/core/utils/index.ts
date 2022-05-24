@@ -24,24 +24,42 @@ export const sortByDate = <ListModel extends SortByDateArgs>(
   });
 };
 
+const finishInFn = ({
+  time,
+  moment,
+}: {
+  time: string | Date;
+  moment: "start" | "finish";
+}) => {
+  type Unit = "month" | "days" | "hours" | "minutes";
+
+  const finishIn = (unit: Unit) => dayjs(dayjs(time)).diff(dayjs(), unit);
+
+  const momentText = moment === "start" ? "Começou" : "Termina";
+
+  return finishIn("month") > 0
+    ? `${momentText} em ${finishIn("month") + 1} meses`
+    : finishIn("days") > 0
+    ? `${momentText} em ${finishIn("days")} dias`
+    : finishIn("hours") > 0
+    ? `${momentText} em ${finishIn("hours")} horas`
+    : finishIn("minutes") > 0
+    ? `${momentText} em ${finishIn("minutes")} minutos`
+    : "Já terminou";
+};
+
 export const calculateRemainTime = (timing: {
   startDate?: string | Date | null;
   endDate?: string | Date | null;
 }) => {
-  if (!timing.endDate || !timing.startDate) return "indefinido";
-  type Unit = "month" | "days" | "hours" | "minutes";
-  const finishIn = (unit: Unit) =>
-    dayjs(dayjs(timing.endDate)).diff(dayjs(), unit);
+  if (timing.endDate) {
+    return finishInFn({ time: timing.endDate, moment: "finish" });
+  }
 
-  return finishIn("month") > 0
-    ? `Termina em ${finishIn("month") + 1} meses`
-    : finishIn("days") > 0
-    ? `Termina em ${finishIn("days")} dias`
-    : finishIn("hours") > 0
-    ? `Termina em ${finishIn("hours")} horas`
-    : finishIn("minutes") > 0
-    ? `Termina em ${finishIn("minutes")} minutos`
-    : "Já terminou";
+  if (timing.startDate)
+    return finishInFn({ time: timing.startDate, moment: "start" });
+
+  return "indefinido";
 };
 
 export const convertToValidDateTime = (date: string | Date) => {

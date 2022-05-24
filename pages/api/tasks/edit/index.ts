@@ -1,31 +1,16 @@
-// Next.js API route support: https://nextjs.org/docs/api-routes/introduction
-import type { NextApiRequest, NextApiResponse } from "next";
-import { AuthMiddleware } from "../../../../features/api/core/middlewares/auth";
-import { editTaskController } from "../../../../features/api/task/controllers/editTaskController";
+import {
+  callAuthWithCookieMiddleware,
+  getNextConnectHandler,
+} from "@/api/core/config/nextConnect";
+import { editTaskController } from "@/api/task/controllers/editTaskController";
 
-import { handleServerError } from "../../../../features/shared/lib/server_errors";
+const handler = getNextConnectHandler({
+  allowMethods: ["POST"],
+  errMessage: ["erro ao editar tarefa"],
+});
 
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse
-) {
-  const { method } = req;
+callAuthWithCookieMiddleware(handler);
 
-  try {
-    await AuthMiddleware(req, res);
-  } catch (error) {
-    return handleServerError(res, 401, ["bearer token inválido"]);
-  }
+handler.post(editTaskController);
 
-  switch (method) {
-    case "POST": {
-      await editTaskController(req, res);
-      break;
-    }
-
-    default:
-      res.setHeader("Allow", ["POST"]);
-      res.status(405).end(`Metodo ${method} não permitido`);
-      break;
-  }
-}
+export default handler;

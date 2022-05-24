@@ -1,30 +1,16 @@
-// Next.js API route support: https://nextjs.org/docs/api-routes/introduction
-import type { NextApiRequest, NextApiResponse } from "next";
-import { updateProjectController } from "../../../../features/api/project/controllers/updateProjectController";
-import { AuthMiddleware } from "../../../../features/api/core/middlewares/auth";
-import { handleServerError } from "../../../../features/shared/lib/server_errors";
+import {
+  callAuthWithCookieMiddleware,
+  getNextConnectHandler,
+} from "@/api/core/config/nextConnect";
+import { updateProjectController } from "@/api/project/controllers/updateProjectController";
 
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse
-) {
-  const { method } = req;
+const handler = getNextConnectHandler({
+  allowMethods: ["POST"],
+  errMessage: ["erro ao editar projeto"],
+});
 
-  try {
-    await AuthMiddleware(req, res);
-  } catch (error) {
-    return handleServerError(res, 401, ["bearer token inválido"]);
-  }
+callAuthWithCookieMiddleware(handler);
 
-  switch (method) {
-    case "POST": {
-      await updateProjectController(req, res);
+handler.post(updateProjectController);
 
-      break;
-    }
-    default:
-      res.setHeader("Allow", ["POST"]);
-      res.status(405).end(`Metodo ${method} não permitido`);
-      break;
-  }
-}
+export default handler;

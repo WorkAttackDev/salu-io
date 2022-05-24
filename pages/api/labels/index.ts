@@ -1,5 +1,5 @@
 import {
-  callAuthMiddleware,
+  callAuthWithCookieMiddleware,
   getNextConnectHandler,
 } from "../../../features/api/core/config/nextConnect";
 import getLabelsController from "../../../features/api/label/controllers/getLabels";
@@ -10,7 +10,7 @@ const handler = getNextConnectHandler({
   errMessage: ["erro ao buscar labels"],
 });
 
-callAuthMiddleware(handler);
+callAuthWithCookieMiddleware(handler);
 
 handler.get(getLabelsController);
 handler.delete(removeLabelController);

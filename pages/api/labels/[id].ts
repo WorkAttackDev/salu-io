@@ -1,5 +1,5 @@
 import {
-  callAuthMiddleware,
+  callAuthWithCookieMiddleware,
   getNextConnectHandler,
 } from "../../../features/api/core/config/nextConnect";
 import editLabelController from "../../../features/api/label/controllers/editLabel";
@@ -9,7 +9,7 @@ const handler = getNextConnectHandler({
   errMessage: ["erro ao editar label"],
 });
 
-callAuthMiddleware(handler);
+callAuthWithCookieMiddleware(handler);
 
 handler.post(editLabelController);
 

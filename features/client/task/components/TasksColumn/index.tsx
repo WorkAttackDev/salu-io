@@ -2,6 +2,7 @@ import { ProjectStatus } from "@prisma/client";
 import React from "react";
 import { MyTask } from "../../../../shared/models/myTask";
 import Loading from "../../../core/components/Loading";
+import useMoveTask from "../../hooks/useMoveTask";
 import useTask from "../../hooks/useTask";
 import TasksList from "../TasksList";
 import TasksColumnModal from "./TasksColumnModal";
@@ -16,12 +17,12 @@ type Props = {
 const TasksColumn = ({ className = "", title, tasks, status }: Props) => {
   const {
     handleCloseModal,
-    handleMoveCard,
     handleSelectTask,
     isModalOpen,
     deleteTaskMutation,
-    editTaskMutation,
   } = useTask();
+
+  const { handleMoveTask } = useMoveTask();
 
   return (
     <article
@@ -35,14 +36,12 @@ const TasksColumn = ({ className = "", title, tasks, status }: Props) => {
         tasks={tasks}
         onSelect={handleSelectTask}
         status={status}
-        onMoveCard={handleMoveCard}
+        onMoveCard={handleMoveTask}
       />
 
       <TasksColumnModal isOpen={isModalOpen} onClose={handleCloseModal} />
 
-      <Loading
-        isLoading={editTaskMutation.loading || deleteTaskMutation.loading}
-      />
+      <Loading isLoading={deleteTaskMutation.loading} />
     </article>
   );
 };

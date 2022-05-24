@@ -8,7 +8,7 @@ import { useErrorStore } from "../../../core/stores/errorStore";
 export default async function getTaskTodosClient({
   taskId,
 }: {
-  taskId: number;
+  taskid: string;
 }) {
   const res = await AxiosInstance.get<
     any,
@@ -17,7 +17,7 @@ export default async function getTaskTodosClient({
   return res.data.data;
 }
 
-export const useTaskTodosQuery = ({ taskId }: { taskId: number }) => {
+export const useTaskTodosQuery = ({ taskId }: { taskid: string }) => {
   const { handleError } = useErrorStore();
 
   const query = useQuery("getTaskTodos", () => getTaskTodosClient({ taskId }), {
