@@ -1,3 +1,4 @@
+import useAuth from "@/client/user/hooks/useAuth";
 import { NextPage } from "next";
 import { useRouter } from "next/router";
 import React, { useEffect } from "react";
@@ -5,7 +6,6 @@ import { SubmitHandler } from "react-hook-form";
 import Loading from "../../features/client/core/components/Loading";
 import MainLayout from "../../features/client/core/components/MainLayout";
 import useApi from "../../features/client/core/hooks/use_api";
-import { useAuthStore } from "../../features/client/core/stores/authStore";
 import { useErrorStore } from "../../features/client/core/stores/errorStore";
 import { handleClientError } from "../../features/client/core/utils/client_errors";
 import {
@@ -16,8 +16,6 @@ import { AuthForm } from "../../features/client/user/components/AuthForm";
 import {
   loginValidation,
   LoginValidationParams,
-  loginWithGoogleValidation,
-  LoginWithGoogleValidationParams,
 } from "../../features/shared/lib/validation";
 
 const LoginPage: NextPage = () => {
@@ -26,9 +24,7 @@ const LoginPage: NextPage = () => {
 
   const { replace } = useRouter();
 
-  const { setToken, setUser } = useAuthStore();
-
-  const user = useAuthStore((state) => state.user);
+  const { user } = useAuth();
 
   const { setErrors, setIsOpen } = useErrorStore();
 
@@ -53,33 +49,12 @@ const LoginPage: NextPage = () => {
 
       if (!resData) return;
 
-      setUser(resData.user);
-      setToken(resData.token);
       replace("/");
     } catch (error) {
       setErrors(handleClientError(error));
       setIsOpen(true);
     }
   };
-
-  // const handleLoginWithGoogle = async (
-  //   data: LoginWithGoogleValidationParams
-  // ) => {
-  //   try {
-  //     const googleData = loginWithGoogleValidation(data);
-  //     const resData = await loginWithGoogleMutation.request(
-  //       loginWithGoogleClient(googleData)
-  //     );
-
-  //     if (!resData) return;
-  //     setUser(resData.user);
-  //     setToken(resData.token);
-  //     replace("/");
-  //   } catch (error) {
-  //     setErrors(handleClientError(error));
-  //     setIsOpen(true);
-  //   }
-  // };
 
   return (
     <MainLayout className='flex w-full justify-center align-center '>

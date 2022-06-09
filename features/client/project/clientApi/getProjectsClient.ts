@@ -6,7 +6,7 @@ import {
   globalSetProjectPaginated,
 } from "../stores/useProductsStore";
 import { AxiosInstance } from "../../core/config/client";
-import { useAuthStore } from "../../core/stores/authStore";
+import useAuth from "@/client/user/hooks/useAuth";
 
 type GetProjectsParams = {
   page?: number;
@@ -16,13 +16,17 @@ type GetProjectsParams = {
 };
 
 export const getProjectsClient = async (params?: GetProjectsParams) => {
-  const userId = useAuthStore.getState().user?.id;
+  const { user } = useAuth();
+
+  if (!user) {
+    throw new Error("Usuário não autenticado");
+  }
 
   const res = await AxiosInstance.get<
     any,
     AxiosResponse<PaginatedApiResponse<Project[]>>
   >(
-    `/projects?userId=${userId}&limit=${params?.limit ?? PAGINATION_LIMIT}${
+    `/projects?userId=${user.id}&limit=${params?.limit ?? PAGINATION_LIMIT}${
       params?.page ? "&page=" + params.page : ""
     }${params?.name ? "&name=" + params.name : ""}${
       params?.sortBy ? "&sortBy=" + params.sortBy : ""

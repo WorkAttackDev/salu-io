@@ -6,9 +6,9 @@ import { useRouter } from "next/router";
 import React from "react";
 import { linksObj } from "../../core/data/links";
 import useApi from "../../core/hooks/use_api";
-import { useAuthStore } from "../../core/stores/authStore";
 import { useErrorStore } from "../../core/stores/errorStore";
 import { logoutClient } from "../client";
+import useAuth from "../hooks/useAuth";
 
 type Props = {
   className?: string;
@@ -16,7 +16,7 @@ type Props = {
 };
 
 const UserCard = ({ className = "", isExpanded }: Props) => {
-  const { user, setUser, setToken } = useAuthStore();
+  const { user } = useAuth();
   const { replace } = useRouter();
 
   const { setErrors, setIsOpen } = useErrorStore();
@@ -27,7 +27,6 @@ const UserCard = ({ className = "", isExpanded }: Props) => {
     try {
       const resData = await request(logoutClient());
       if (!resData) return;
-      setUser(null);
       replace("/");
     } catch (error) {
       const err = error as AxiosError<any>;

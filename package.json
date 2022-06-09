@@ -19,7 +19,7 @@
     "@heroicons/react": "^1.0.5",
     "@prisma/client": "^3.13.0",
     "@tailwindcss/line-clamp": "^0.4.0",
-    "@workattackdev/wdk": "^0.1.17",
+    "@workattackdev/wdk": "^0.1.23",
     "axios": "^0.27.2",
     "bcrypt": "^5.0.1",
     "cookies": "^0.8.0",

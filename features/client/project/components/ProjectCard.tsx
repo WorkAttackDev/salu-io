@@ -1,3 +1,4 @@
+import useAuth from "@/client/user/hooks/useAuth";
 import { CalendarIcon } from "@heroicons/react/outline";
 import { Project } from "@prisma/client";
 import day from "dayjs";
@@ -15,7 +16,6 @@ import OptionDropdown, {
 } from "../../core/components/OptionDropdown";
 import { linksObj } from "../../core/data/links";
 import useApi from "../../core/hooks/use_api";
-import { useAuthStore } from "../../core/stores/authStore";
 import { calculateRemainTime } from "../../core/utils";
 import { deleteProjectClient } from "../clientApi/deleteProjectClient";
 import { useProjectStore } from "../stores/useProductsStore";
@@ -30,7 +30,7 @@ type Props = {
 const ProjectCard = ({ project }: Props) => {
   const { id, name, description, startDate, endDate } = project;
   const { push } = useRouter();
-  const user = useAuthStore((state) => state.user);
+  const { user } = useAuth();
 
   const { setProjects, projects } = useProjectStore((s) => ({
     setProjects: s.setProjects,
